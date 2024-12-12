@@ -11,6 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
+<<<<<<< HEAD
    <string>Maquette du Restaurant</string>
   </property>
 
@@ -38,4 +39,16 @@
  </widget>
  <resources/>
  <connections/>
+=======
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <!-- Le CharacterWidget sera ajouté ici dynamiquement -->
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+>>>>>>> 5fdc774 (Modélisation personnage)
 </ui>
