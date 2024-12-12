@@ -11,44 +11,52 @@
    </rect>
   </property>
   <property name="windowTitle">
-<<<<<<< HEAD
-   <string>Maquette du Restaurant</string>
+   <string>Plats en attentes</string>
   </property>
-
-  <!-- Zone centrale contenant le restaurant -->
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string>background-color: white;</string>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <!-- Aucune interface supplémentaire ici, le dessin est effectué dans RestaurantWidget -->
+    <!-- En-tête -->
+    <item>
+     <widget class="QLabel" name="attenteLabel">
+      <property name="text">
+       <string>PLAT EN ATTENTE</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="styleSheet">
+       <string>font-weight: bold; font-size: 24px; margin-top: 10px;</string>
+      </property>
+     </widget>
+    </item>
+    <!-- Scroll Area pour la liste des menus -->
+    <item>
+     <widget class="QScrollArea" name="menuScrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="menuScrollAreaWidget">
+       <layout class="QVBoxLayout" name="menuListLayout"/>
+      </widget>
+     </widget>
+    </item>
    </layout>
   </widget>
-
-  <!-- Barre de menu -->
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
-
-  <!-- Barre d'état -->
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
-=======
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <!-- Le CharacterWidget sera ajouté ici dynamiquement -->
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar"/>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
->>>>>>> 5fdc774 (Modélisation personnage)
 </ui>
