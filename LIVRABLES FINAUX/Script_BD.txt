@@ -1,0 +1,423 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : 127.0.0.1:3306
+-- Généré le : mar. 03 déc. 2024 à 14:22
+-- Version du serveur : 8.0.31
+-- Version de PHP : 8.0.26
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `restaurantmanagement`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+CREATE TABLE IF NOT EXISTS `clients` (
+  `ClientID` int NOT NULL AUTO_INCREMENT,
+  `FullName` varchar(100) DEFAULT NULL,
+  `ReservationID` int DEFAULT NULL,
+  `ArrivalTime` datetime DEFAULT NULL,
+  `DepartureTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`ClientID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `employees`
+--
+
+DROP TABLE IF EXISTS `employees`;
+CREATE TABLE IF NOT EXISTS `employees` (
+  `EmployeeID` int NOT NULL AUTO_INCREMENT,
+  `FirstName` varchar(50) DEFAULT NULL,
+  `LastName` varchar(50) DEFAULT NULL,
+  `Position` varchar(50) DEFAULT NULL,
+  `Salary` decimal(10,2) DEFAULT NULL,
+  `HireDate` date DEFAULT NULL,
+  PRIMARY KEY (`EmployeeID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `ingredients`
+--
+
+DROP TABLE IF EXISTS `ingredients`;
+CREATE TABLE IF NOT EXISTS `ingredients` (
+  `IngredientsID` int NOT NULL AUTO_INCREMENT,
+  `NameItem` varchar(250) DEFAULT NULL,
+  `Unit` varchar(250) DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  PRIMARY KEY (`IngredientsID`)
+) ENGINE=MyISAM AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `ingredients`
+--
+
+INSERT INTO `ingredients` (`IngredientsID`, `NameItem`, `Unit`, `Quantity`) VALUES
+(1, 'Pâte feuilletée', 'g', 1),
+(2, 'Œufs', 'unité(s)', 1),
+(3, 'Sel', NULL, NULL),
+(4, 'Poivre', NULL, NULL),
+(5, 'Crème fraîche', 'c à s', 1),
+(6, 'Chapelure', 'cuillères', 1),
+(7, 'Oignons ou échalotes', 'petits', 1),
+(8, 'Chair de crabe', 'g', 1),
+(9, 'Jus de citron', NULL, 1),
+(10, 'Persil haché', 'c à s', 1),
+(11, 'Piment de Cayenne', 'pointe de couteau', 1),
+(12, 'Gruyère râpé', 'sachet', 1),
+(13, 'Chair à saucisse', 'kg', 1),
+(14, 'Bœuf haché', 'kg', 1),
+(15, 'Oignons ', 'unité(s)', 1),
+(16, 'Ail (mixé petit)', 'tête ½', 1),
+(17, 'Concentré de tomate', 'tube', 1),
+(18, 'Farine', 'verre', 1),
+(19, 'Vinaigre de vin rouge', 'verre', 1),
+(20, 'Bouillon de bœuf', 'cube', 1),
+(21, 'Huile de tournesol', NULL, 1),
+(22, 'Viande de veau', 'kg', 1),
+(23, 'Bouillon de poule', 'cube', 1),
+(24, 'Bouquet garni', NULL, 1),
+(25, 'Bouillon de légume', NULL, 1),
+(26, 'Carottes', 'unité(s)', 1),
+(27, 'Champignon', NULL, 1),
+(28, 'Jus de citron', NULL, 1),
+(29, 'Vin blanc', 'cl', 1),
+(30, 'Tomates', NULL, 1),
+(31, 'Concombre', NULL, 1),
+(32, 'Pain rassi', NULL, 1),
+(33, 'Huile d\'olive', NULL, 1),
+(34, 'Poivron', NULL, 1),
+(35, 'Beurre', 'g', 1),
+(36, 'Sucre en poudre', 'g', 1),
+(37, 'Sanglier', 'kg', 1),
+(38, 'Ventrèche', 'kg', 1),
+(39, 'Gorge de porc', 'kg', 1),
+(40, 'Lait', 'l', 1),
+(41, 'Thon', 'boîte', 1),
+(42, 'Lardons fumés', 'g', 1),
+(43, 'Emmental râpé', 'g', 1),
+(44, 'Muscade', NULL, 1),
+(45, 'Poitrines', 'unité(s)', 1),
+(46, 'Foie', 'unité(s)', 1),
+(47, 'Porto', 'cuillère', 1),
+(48, 'Film alimentaire', NULL, 1),
+(49, 'Papier d\'aluminium', NULL, 1),
+(50, 'Ficelle de boucher', NULL, 1),
+(51, 'Appareil de cuisson à la vapeur', NULL, 1),
+(52, 'Foie gras cru', 'g', 1),
+(53, 'Sucre', 'pincée', 1),
+(54, 'Blancs de poulet', 'unité(s)', 1),
+(55, 'Oignon', 'unité(s)', 1),
+(56, 'Vinaigre balsamique', 'c. à soupe', 1),
+(57, 'Miel', 'c. à soupe', 1),
+(58, 'Poivre blanc', 'g', 1),
+(59, 'Lotte', NULL, 1),
+(60, 'Congre', NULL, 1),
+(61, 'Rouget grondin', NULL, 1),
+(62, 'Seiche', NULL, 1),
+(63, 'Petit crabe', NULL, 1),
+(64, 'Pommes de terre', NULL, 1),
+(65, 'Saindoux', NULL, 1),
+(66, 'Poireau', 'unité(s)', 1),
+(67, 'Oignon piqué d’un clou de girofle', 'unité(s)', 1),
+(68, 'Gousse d’ail', 'unité(s)', 1),
+(69, 'Thym', NULL, 1),
+(70, 'Céleri', 'branche', 1),
+(71, 'Feuille de laurier', 'unité(s)', 1),
+(72, 'Jambon (en lardons)', 'g', 250),
+(73, 'Oignon', 'unité(s)', 1),
+(74, 'Piments verts doux', 'unité(s)', 2),
+(75, 'Tomates', 'unité(s)', 2),
+(76, 'Persil', NULL, 1),
+(77, 'Amandes', 'g', 100),
+(78, 'Vin blanc sec', 'verre', 1),
+(79, 'Huile d’olive', NULL, 1),
+(80, 'Piment fort', 'pointe', 1),
+(81, 'Champignons chinois', 'boîte', 1),
+(82, 'Petites crevettes décortiquées', 'boîte', 1),
+(83, 'Ailes de poulet', NULL, 1),
+(84, 'Cuisses de poulet', NULL, 1),
+(85, 'Pilon de poulet', NULL, 1),
+(86, 'Carottes', 'unité(s)', 4),
+(87, 'Poireaux', 'unité(s)', 2),
+(88, 'Bouillon cube', 'unité(s)', 1),
+(89, 'Coriandre', 'botte', 1),
+(90, 'Oignons verts', 'unité(s)', 1),
+(91, 'Épices raz el hanout', NULL, 1),
+(92, 'Mouton', NULL, 1),
+(93, 'Merguez', 'unité(s)', 1),
+(94, 'Colorant', NULL, 1),
+(95, 'Escargots', 'pièces', 100),
+(96, 'Sucre roux', 'g', 100),
+(97, 'Sucre vanillé', 'sachet', 1),
+(98, 'Mascarpone', 'g', 250),
+(99, 'Biscuits à la cuillère', 'unité(s)', 24),
+(100, 'Café noir non sucré', 'l', 1),
+(101, 'Poudre de cacao amer', 'g', 30),
+(102, 'Beurre fondu', 'g', 125),
+(103, 'Sucre en poudre', 'g', 130),
+(104, 'Miel', 'cuillère à soupe', 1),
+(105, 'Farine', 'g', 150),
+(106, 'Levure', 'sachet', 1),
+(107, 'Citron non traité', 'unité(s)', 1),
+(108, 'Talon de jambon', 'g', 150),
+(109, 'Concombre', 'unité(s)', 2),
+(110, 'Saumon fumé', 'g', 200),
+(111, 'Ciboulette', 'botte', 1),
+(112, 'Couenne de porc', 'g', 100),
+(113, 'Échalotes', 'unité(s)', 4),
+(114, 'Graisse d’oie', 'cuillère à soupe', 1),
+(115, 'Persil plat', 'botte', 1),
+(116, 'Bouquet garni', 'unité(s)', 1),
+(117, 'Fenouil sauvage', 'branche', 1),
+(118, 'Vinaigre blanc', 'verre', 1),
+(119, 'Gros sel', 'poignée', 1),
+(120, 'Poivre du moulin', NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `kitchen`
+--
+
+DROP TABLE IF EXISTS `kitchen`;
+CREATE TABLE IF NOT EXISTS `kitchen` (
+  `KitchenID` int NOT NULL AUTO_INCREMENT,
+  `EquipmentName` varchar(100) DEFAULT NULL,
+  `MaxCapacity` int DEFAULT NULL,
+  `Status` enum('Available','In Use','Maintenance') DEFAULT 'Available',
+  PRIMARY KEY (`KitchenID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `orderdetails`
+--
+
+DROP TABLE IF EXISTS `orderdetails`;
+CREATE TABLE IF NOT EXISTS `orderdetails` (
+  `OrderDetailID` int NOT NULL AUTO_INCREMENT,
+  `OrderID` int DEFAULT NULL,
+  `RecipeID` int DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `Subtotal` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`OrderDetailID`),
+  KEY `OrderID` (`OrderID`),
+  KEY `RecipeID` (`RecipeID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `orders`
+--
+
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE IF NOT EXISTS `orders` (
+  `OrderID` int NOT NULL AUTO_INCREMENT,
+  `TableID` int DEFAULT NULL,
+  `EmployeeID` int DEFAULT NULL,
+  `OrderTime` datetime DEFAULT NULL,
+  `Status` enum('Pending','In Progress','Completed','Cancelled') DEFAULT 'Pending',
+  `TotalAmount` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`OrderID`),
+  KEY `TableID` (`TableID`),
+  KEY `EmployeeID` (`EmployeeID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `recipes`
+--
+
+DROP TABLE IF EXISTS `recipes`;
+CREATE TABLE IF NOT EXISTS `recipes` (
+  `RecipeID` int NOT NULL AUTO_INCREMENT,
+  `RecipeName` varchar(100) DEFAULT NULL,
+  `RecipeType` enum('Starter','Main Course','Dessert') DEFAULT NULL,
+  `PreparationTime` int DEFAULT NULL,
+  `CookingTime` int DEFAULT NULL,
+  `TotalTime` int GENERATED ALWAYS AS ((`PreparationTime` + `CookingTime`)) VIRTUAL,
+  `StockRequired` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`RecipeID`)
+) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `recipes`
+--
+
+INSERT INTO `recipes` (`RecipeID`, `RecipeName`, `RecipeType`, `PreparationTime`, `CookingTime`, `StockRequired`) VALUES
+(11, 'Feuilleté au crabe', 'Starter', 10, 20, 1),
+(12, 'oeufs cocotte', 'Starter', 10, 5, 1),
+(13, 'Gaspatcho', 'Starter', 10, 5, 1),
+(14, 'Paté de sanglier cliente Christian', 'Starter', 20, 120, 1),
+(15, 'Paté de sanglier Lolotte', 'Starter', 20, 180, 1),
+(16, 'Tarte au thon', 'Starter', 10, 20, 1),
+(17, 'Quiche-Lorraine', 'Starter', 15, 35, 1),
+(18, 'Foie gras à la vapeur', 'Starter', 60, 5, 1),
+(19, 'Soupe chinoise', 'Starter', 15, 30, 1),
+(20, 'Les cagouilles à la charentaise', 'Starter', 30, 190, 1),
+(21, 'Bouillinade d\'anguilles ou de poissons', 'Main Course', 10, 20, 1),
+(22, 'Boles de picoulats', 'Main Course', 10, 60, 1),
+(23, 'Blanquette de veau', 'Main Course', 10, 120, 1),
+(24, 'Foie gras à la vapeur', 'Main Course', 60, 5, 1),
+(26, 'Escargots à la catalane', 'Main Course', 90, 60, 1),
+(27, 'Foie gras au muscat', 'Main Course', 60, 10, 1),
+(28, 'Chorba', 'Main Course', 70, 15, 1),
+(31, 'Gaufres', 'Dessert', 20, 120, 1),
+(32, 'Crepes', 'Dessert', 10, 10, 1),
+(33, 'Tiramisu', 'Dessert', 10, 10, 1),
+(34, 'Madeleine au miel', 'Dessert', 15, 5, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `recipestock`
+--
+
+DROP TABLE IF EXISTS `recipestock`;
+CREATE TABLE IF NOT EXISTS `recipestock` (
+  `RecipeStockID` int NOT NULL AUTO_INCREMENT,
+  `RecipeID` int DEFAULT NULL,
+  `Preparation` text,
+  `Details` text,
+  PRIMARY KEY (`RecipeStockID`),
+  KEY `RecipeID` (`RecipeID`)
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `recipestock`
+--
+
+INSERT INTO `recipestock` (`RecipeStockID`, `RecipeID`, `Preparation`, `Details`) VALUES
+(1, 22, '13(3), 14(1), 15(2), 16(1.5), 2(2), 3(1), 4(1), 15(2), 16(1.5), 17(1), 18(1), 19(1), 20(2), 21(1)', 'Façonner les boules et les fariner, les faire revenir à l’huile de tournesol des 2 côtés et réserver.\r\nDans un grand faitout, faire revenir dans l’huile de tournesol les 2 oignons mixés très fins ainsi que la tête ½ d’ail mixé aussi très fin, 1 tube de concentré de tomate, 1 bon verre de farine et 1 bon verre de vinaigre de vin rouge. Laisser cuire 1 minute.\r\nVerser 1 litre ½ d’eau très chaude, y ajouter les 2 cubes de bouillon au bœuf et laisser mijoter 15 minutes. Au bout de ce temps, rajouter les boules une à une. Porter à ébullition et laisser cuire 25 minutes. Rajouter les patates coupées en 4 (2 par personne)  et cuire à feu doux.\r\n'),
+(2, 23, '22(1), 23(1), 24(1), 25(1), 26(2-3), 27(1), 35(1), 28(1), 2(1), 29(25)\r\n', 'Etape 1 : Faire revenir la viande avec du beurre. Saupoudrer de farine et mettre un peu deau.\r\nEtape 2 : Ajouter les cubes de bouillon, puis le vin et couvrir deau.\r\nEtape 3 : Couper les carottes, les champignons et les oignons. Les ajouter et faire mijoter. \r\nEtape 4 : Mettre la crème dans un bol avec le jaune dœuf et le citron et ajouter en dernière minutes dans la cocotte.'),
+(3, 13, '30(1), 55(1), 31(1), 32(1), 33(1), 19(1), 34(1), 3(1)', 'Au fond d\'un saladier, mettre un crouton de pain rassi, rajouter l\'huile d\'olive, le vinaigre puis les légumes coupés. Saler et poivrer. Placer le récipient au frigo pour la nuit. Le lendemain, mixer et passer au tamis. Servir avec les mêmes légumes coupés en petits morceaux sur du pain grillé à l\'huile d\'olive.'),
+(4, 32, '105(500), 36(250), 40(1), 2(5)', 'Cuire à la crépière'),
+(5, 31, '18(250), 2(3), 35(100), 40(1), 36(75), 3(1)', 'Mettre dans un gaufrier et cuire à votre convenance.'),
+(6, 11, '1(300), 2(2), 3(1), 4(1), 5(3-4), 6(2), 7(2), 8(120), 9(1), 10(3)', 'Préchauffer le four à 230° (th 7-8)\r\nMélanger la chair de crabe, le jus de citron, la chapelure, les herbes et le piment\r\nLier le tout avec un œuf\r\nSaler et poivrer\r\nDécouper 4 disques dans la pâte feuilletée et répartir la farce sur la moitié de chaque disque, en laissant 1 cm de rebord\r\nRabattre lautre moitié et souder\r\nBadigeonner les feuilletés avec un oeuf battu et salé, puis strier avec une fourchette\r\nMettre au four à 180° (th 6) pendant 20mn minimum');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reservations`
+--
+
+DROP TABLE IF EXISTS `reservations`;
+CREATE TABLE IF NOT EXISTS `reservations` (
+  `ReservationID` int NOT NULL AUTO_INCREMENT,
+  `ClientID` int DEFAULT NULL,
+  `TableID` int DEFAULT NULL,
+  `ReservationTime` datetime DEFAULT NULL,
+  `NumGuests` int DEFAULT NULL,
+  PRIMARY KEY (`ReservationID`),
+  KEY `ClientID` (`ClientID`),
+  KEY `TableID` (`TableID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `resources`
+--
+
+DROP TABLE IF EXISTS `resources`;
+CREATE TABLE IF NOT EXISTS `resources` (
+  `ResourceID` int NOT NULL AUTO_INCREMENT,
+  `ResourceName` varchar(100) DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `ResourceType` enum('Plate','Cutlery','Glass','Napkin','Other') DEFAULT NULL,
+  `Status` enum('Available','In Use','Dirty') DEFAULT 'Available',
+  PRIMARY KEY (`ResourceID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `stock`
+--
+
+DROP TABLE IF EXISTS `stock`;
+CREATE TABLE IF NOT EXISTS `stock` (
+  `StockID` int NOT NULL AUTO_INCREMENT,
+  `ItemName` varchar(100) DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `StorageType` enum('Room Temperature','Refrigerated','Frozen') DEFAULT NULL,
+  `ExpirationDate` date DEFAULT NULL,
+  PRIMARY KEY (`StockID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `stockalerts`
+--
+
+DROP TABLE IF EXISTS `stockalerts`;
+CREATE TABLE IF NOT EXISTS `stockalerts` (
+  `AlertID` int NOT NULL AUTO_INCREMENT,
+  `StockID` int DEFAULT NULL,
+  `AlertTime` datetime DEFAULT NULL,
+  `AlertMessage` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`AlertID`),
+  KEY `StockID` (`StockID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tables`
+--
+
+DROP TABLE IF EXISTS `tables`;
+CREATE TABLE IF NOT EXISTS `tables` (
+  `TableID` int NOT NULL AUTO_INCREMENT,
+  `TableCapacity` int DEFAULT NULL,
+  `Status` enum('Available','Occupied','Reserved') DEFAULT 'Available',
+  `Location` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`TableID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `tasklogs`
+--
+
+DROP TABLE IF EXISTS `tasklogs`;
+CREATE TABLE IF NOT EXISTS `tasklogs` (
+  `LogID` int NOT NULL AUTO_INCREMENT,
+  `TaskDescription` varchar(255) DEFAULT NULL,
+  `EmployeeID` int DEFAULT NULL,
+  `TaskTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`LogID`),
+  KEY `EmployeeID` (`EmployeeID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
