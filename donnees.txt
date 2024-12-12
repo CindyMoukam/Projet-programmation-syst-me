@@ -1,0 +1,963 @@
+-- 2.1 Recettes
+-- Insertion des recettes (Entrées)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Feuilleté au crabe', 10, 20, 'Mélanger les ingrédients, garnir la pâte et cuire.'),
+('Œufs cocotte', 10, 5, 'Cuire blancs au bain-marie, ajouter jaunes.'),
+('Salade César', 15, 0, 'Mélanger laitue avec garnitures.'),
+('Soupe froide de concombre', 10, 0, 'Mixer concombre et yaourt, ajouter ail, menthe, citron.'),
+('Bruschetta', 10, 5, 'Griller pain, ajouter mélange tomate-ail-huile-basilic.'),
+('Tartare de saumon', 15, 0, 'Couper saumon et avocat en dés, assaisonner avec citron.'),
+('Velouté de champignons', 10, 15, 'Faire revenir oignon et champignons, ajouter crème, mixer.'),
+('Carpaccio de betterave', 10, 0, 'Couper betterave en tranches, garnir chèvre, noix, roquette.'),
+('Mini quiches au fromage', 15, 20, 'Garnir pâte, mélanger œufs et fromage, cuire.'),
+('Gaspacho', 15, 0, 'Mixer tous les ingrédients, servir froid.');
+
+-- Insertion des recettes (Plats)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Bouillinade de poissons', 10, 20, 'Superposer ingrédients dans cocotte, cuire.'),
+('Boles de picoulats', 60, 0, 'Former boules, mijoter avec légumes.'),
+('Blanquette de veau', 10, 120, 'Faire revenir viande, mijoter avec légumes.'),
+('Poulet rôti au thym', 15, 60, 'Badigeonner poulet, rôtir avec thym et ail.'),
+('Lasagnes végétariennes', 20, 40, 'Superposer couches légumes, béchamel, pâte, cuire.'),
+('Gratin dauphinois', 15, 45, 'Disposer pommes de terre en couches, cuire avec crème.'),
+('Ratatouille', 20, 30, 'Faire revenir légumes, mijoter.'),
+('Bœuf bourguignon', 20, 120, 'Faire revenir viande, mijoter avec vin et légumes.'),
+('Curry de légumes', 15, 30, 'Cuire légumes avec lait de coco et épices.'),
+('Tagliatelles au saumon', 15, 10, 'Cuire pâtes, mélanger avec saumon et crème.');
+
+-- Insertion des recettes (Desserts)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Mousse au chocolat', 15, 0, 'Faire fondre chocolat, incorporer œufs battus.'),
+('Tarte aux pommes', 20, 30, 'Garnir pâte, ajouter pommes, cuire.'),
+('Crème brûlée', 15, 30, 'Cuire crème au bain-marie, caraméliser avec sucre.'),
+('Tiramisu', 20, 0, 'Monter mascarpone, alterner avec biscuits imbibés de café.'),
+('Fondant au chocolat', 15, 10, 'Mélanger ingrédients, cuire brièvement.'),
+('Clafoutis aux cerises', 15, 40, 'Verser mélange sur cerises, cuire.'),
+('Panna cotta', 10, 0, 'Chauffer crème, ajouter gélatine, réfrigérer.'),
+('Millefeuille', 30, 0, 'Cuire pâte, alterner couches avec crème.'),
+('Cheesecake', 20, 60, 'Préparer base biscuitée, garnir fromage, cuire.'),
+('Tarte au citron meringuée', 30, 40, 'Garnir pâte de crème citron, ajouter meringue, cuire.');
+
+
+
+
+
+
+
+
+
+
+-- Ingrédients nécessaires
+INSERT INTO ingredients (name, unit, stock_quantity) VALUES
+('Pâte feuilletée', 'pièce', 100),
+('Crabe', 'g', 5000),
+('Crème fraîche', 'ml', 2000),
+('Ciboulette', 'g', 100),
+('Sel', 'g', 1000),
+('Poivre', 'g', 500),
+('Œufs', 'pièce', 500),
+('Beurre', 'g', 1000),
+('Laitue', 'g', 3000),
+('Tomate', 'g', 2000),
+('Concombre', 'g', 2000),
+('Yaourt nature', 'ml', 1000),
+('Ail', 'g', 500),
+('Menthe', 'g', 100),
+('Citron', 'pièce', 200),
+('Pain', 'pièce', 100),
+('Basilic', 'g', 200),
+("Huile d\'olive", 'ml', 1000),
+('Saumon', 'g', 3000),
+('Avocat', 'g', 1000),
+('Oignon', 'g', 2000),
+('Champignons', 'g', 2000),
+('Betterave', 'g', 2000),
+('Chèvre', 'g', 1000),
+('Noix', 'g', 500),
+('Roquette', 'g', 1000),
+('Fromage râpé', 'g', 3000),
+('Pâte brisée', 'pièce', 100),
+('Poivron', 'g', 1000),
+('Vinaigre de vin', 'ml', 500);
+INSERT INTO ingredients (name, unit, stock_quantity) VALUES
+('Poisson blanc', 'g', 5000),
+('Poisson de roche', 'g', 5000),
+('Tomates', 'g', 2000),
+('Oignons', 'g', 1000),
+('Carottes', 'g', 1000),
+('Farine', 'g', 2000),
+('Bœuf haché', 'g', 3000),
+('Veau', 'g', 3000),
+('Ail', 'g', 500),
+('Thym', 'g', 200),
+('Poulet', 'pièce', 10),
+('Lait', 'ml', 5000),
+('Pommes de terre', 'g', 4000),
+('Légumes variés', 'g', 3000),
+('Vin rouge', 'ml', 2000),
+('Lait de coco', 'ml', 2000),
+('Saumon', 'g', 2000),
+('Tagliatelles', 'g', 3000),
+('Crème fraîche', 'ml', 2000),
+('Fromage râpé', 'g', 1000),
+('Beurre', 'g', 1000),
+('Épices', 'g', 500);
+INSERT INTO ingredients (name, unit, stock_quantity) VALUES
+('Chocolat', 'g', 5000),
+('Œufs', 'pièce', 100),
+('Sucre', 'g', 5000),
+('Farine', 'g', 3000),
+('Pommes', 'g', 4000),
+('Beurre', 'g', 2000),
+('Crème liquide', 'ml', 3000),
+('Mascarpone', 'g', 2000),
+('Biscuits à la cuillère', 'g', 1000),
+('Café', 'ml', 1000),
+('Cerises', 'g', 3000),
+('Gélatine', 'feuille', 200),
+('Citron', 'pièce', 100),
+('Fromage frais', 'g', 2000),
+('Pâte feuilletée', 'g', 3000);
+
+
+
+
+
+
+
+
+
+
+
+-- Feuilleté au crabe
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(1, 1, 1),   -- Pâte feuilletée : 1 pièce
+(1, 2, 150), -- Crabe : 150 g
+(1, 3, 50),  -- Crème fraîche : 50 ml
+(1, 4, 5),   -- Ciboulette : 5 g
+(1, 5, 2),   -- Sel : 2 g
+(1, 6, 1);   -- Poivre : 1 g
+
+-- Œufs cocotte
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(2, 7, 2),   -- Œufs : 2 pièces
+(2, 3, 50),  -- Crème fraîche : 50 ml
+(2, 8, 10),  -- Beurre : 10 g
+(2, 5, 1),   -- Sel : 1 g
+(2, 6, 1);   -- Poivre : 1 g
+
+-- Salade César
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(3, 9, 200),  -- Laitue : 200 g
+(3, 10, 100), -- Tomate : 100 g
+(3, 27, 50),  -- Fromage râpé : 50 g
+(3, 5, 2),    -- Sel : 2 g
+(3, 6, 1);    -- Poivre : 1 g
+
+-- Soupe froide de concombre
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(4, 11, 300), -- Concombre : 300 g
+(4, 12, 50),  -- Yaourt nature : 50 ml
+(4, 13, 1),   -- Ail : 1 g
+(4, 14, 3),   -- Menthe : 3 g
+(4, 15, 1);   -- Citron : 1 pièce
+
+-- Bruschetta
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(5, 16, 2),   -- Pain : 2 pièces
+(5, 10, 100), -- Tomate : 100 g
+(5, 13, 1),   -- Ail : 1 g
+(5, 17, 5),   -- Basilic : 5 g
+(5, 18, 10);  -- Huile d'olive : 10 ml
+
+-- Tartare de saumon
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(6, 19, 200), -- Saumon : 200 g
+(6, 20, 100), -- Avocat : 100 g
+(6, 15, 1);   -- Citron : 1 pièce
+
+-- Velouté de champignons
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(7, 21, 100),  -- Oignon : 100 g
+(7, 22, 300),  -- Champignons : 300 g
+(7, 3, 50),    -- Crème fraîche : 50 ml
+(7, 5, 2),     -- Sel : 2 g
+(7, 6, 1);     -- Poivre : 1 g
+
+-- Carpaccio de betterave
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(8, 23, 200), -- Betterave : 200 g
+(8, 24, 50),  -- Chèvre : 50 g
+(8, 25, 20),  -- Noix : 20 g
+(8, 26, 50);  -- Roquette : 50 g
+
+-- Mini quiches au fromage
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(9, 28, 1),   -- Pâte brisée : 1 pièce
+(9, 7, 2),    -- Œufs : 2 pièces
+(9, 27, 100); -- Fromage râpé : 100 g
+
+-- Gaspacho
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(10, 11, 100),  -- Concombre : 100 g
+(10, 10, 100),  -- Tomate : 100 g
+(10, 29, 50),   -- Poivron : 50 g
+(10, 18, 10),   -- Huile d'olive : 10 ml
+(10, 30, 5);    -- Vinaigre de vin : 5 ml
+
+-- Bouillinade de poissons
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(11, 31, 500),  -- Poisson blanc : 500 g
+(11, 32, 500),  -- Poisson de roche : 500 g
+(11, 10, 200),  -- Tomates : 200 g
+(11, 21, 100),  -- Oignons : 100 g
+(11, 33, 100);  -- Carottes : 100 g
+
+-- Boles de picoulats
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(12, 34, 500), -- Bœuf haché : 500 g
+(12, 22, 100), -- Champignons : 100 g
+(12, 33, 100), -- Carottes : 100 g
+(12, 13, 1);   -- Ail : 1 g
+
+-- Blanquette de veau
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(13, 35, 500), -- Veau : 500 g
+(13, 33, 200), -- Carottes : 200 g
+(13, 21, 100), -- Oignons : 100 g
+(13, 3, 100),  -- Crème fraîche : 100 ml
+(13, 5, 2),    -- Sel : 2 g
+(13, 6, 1);    -- Poivre : 1 g
+
+-- Poulet rôti au thym
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(14, 36, 1),   -- Poulet : 1 pièce
+(14, 37, 5),   -- Thym : 5 g
+(14, 13, 2),   -- Ail : 2 g
+(14, 5, 2),    -- Sel : 2 g
+(14, 6, 1);    -- Poivre : 1 g
+
+-- Lasagnes végétariennes
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(15, 37, 300), -- Légumes variés : 300 g
+(15, 3, 200),  -- Crème fraîche : 200 ml
+(15, 38, 200), -- Fromage râpé : 200 g
+(15, 39, 100), -- Farine : 100 g
+(15, 18, 10);  -- Huile d'olive : 10 ml
+
+-- Gratin dauphinois
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(16, 40, 500), -- Pommes de terre : 500 g
+(16, 3, 200),  -- Crème fraîche : 200 ml
+(16, 5, 2),    -- Sel : 2 g
+(16, 6, 1);    -- Poivre : 1 g
+
+-- Ratatouille
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(17, 10, 200), -- Tomates : 200 g
+(17, 14, 100), -- Courgettes : 100 g
+(17, 33, 50),  -- Poivrons : 50 g
+(17, 21, 50),  -- Oignons : 50 g
+(17, 18, 10),  -- Huile d'olive : 10 ml
+(17, 5, 2);    -- Sel : 2 g
+
+-- Bœuf bourguignon
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(18, 34, 500), -- Bœuf : 500 g
+(18, 10, 200), -- Tomates : 200 g
+(18, 33, 200), -- Carottes : 200 g
+(18, 21, 100), -- Oignons : 100 g
+(18, 41, 500), -- Vin rouge : 500 ml
+(18, 5, 2);    -- Sel : 2 g
+
+-- Curry de légumes
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(19, 37, 500), -- Légumes variés : 500 g
+(19, 18, 10),  -- Huile d'olive : 10 ml
+(19, 3, 100);  -- Crème fraîche : 100 ml
+
+-- Tagliatelles au saumon
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(20, 19, 200), -- Saumon : 200 g
+(20, 42, 300), -- Tagliatelles : 300 g
+(20, 3, 100),  -- Crème fraîche : 100 ml
+(20, 5, 2),    -- Sel : 2 g
+(20, 6, 1);    -- Poivre : 1 g
+
+-- Mousse au chocolat
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(21, 43, 200), -- Chocolat : 200 g
+(21, 7, 2),    -- Œufs : 2 pièces
+(21, 44, 50);  -- Sucre : 50 g
+
+-- Tarte aux pommes
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(22, 45, 300), -- Pommes : 300 g
+(22, 46, 1),   -- Pâte brisée : 1 pièce
+(22, 44, 50),  -- Sucre : 50 g
+(22, 8, 20);   -- Beurre : 20 g
+
+-- Crème brûlée
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(23, 3, 200),  -- Crème liquide : 200 ml
+(23, 7, 2),    -- Œufs : 2 pièces
+(23, 44, 50);  -- Sucre : 50 g
+
+-- Tiramisu
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(24, 47, 250), -- Mascarpone : 250 g
+(24, 48, 200), -- Biscuits à la cuillère : 200 g
+(24, 49, 50);  -- Café : 50 ml
+
+-- Fondant au chocolat
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(25, 43, 200), -- Chocolat : 200 g
+(25, 7, 2),    -- Œufs : 2 pièces
+(25, 44, 50),  -- Sucre : 50 g
+(25, 39, 50);  -- Farine : 50 g
+
+-- Clafoutis aux cerises
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(26, 50, 300), -- Cerises : 300 g
+(26, 7, 2),    -- Œufs : 2 pièces
+(26, 44, 50),  -- Sucre : 50 g
+(26, 39, 50);  -- Farine : 50 g
+
+-- Panna cotta
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(27, 3, 200),  -- Crème liquide : 200 ml
+(27, 51, 2),   -- Feuilles de gélatine : 2 pièces
+(27, 44, 50);  -- Sucre : 50 g
+
+-- Millefeuille
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(28, 52, 3),   -- Pâte feuilletée : 3 pièces
+(28, 47, 200), -- Mascarpone : 200 g
+(28, 44, 50);  -- Sucre : 50 g
+
+-- Cheesecake
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(29, 47, 300), -- Mascarpone : 300 g
+(29, 53, 200), -- Fromage frais : 200 g
+(29, 54, 100); -- Biscuit sablé : 100 g
+
+-- Tarte au citron meringuée
+INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity_needed) VALUES
+(30, 46, 1),   -- Pâte brisée : 1 pièce
+(30, 55, 2),   -- Citrons : 2 pièces
+(30, 44, 50),  -- Sucre : 50 g
+(30, 7, 3);    -- Œufs : 3 pièces
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Feuilleté au crabe
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(1, 'Préchauffer le four à 200°C.', 5, 1),
+(1, 'Mélanger le crabe, la crème, la ciboulette, le sel et le poivre.', 5, 2),
+(1, 'Garnir la pâte avec le mélange et refermer.', 5, 3),
+(1, 'Cuire pendant 20 minutes.', 20, 4);
+
+-- Œufs cocotte
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(2, 'Beurrer des ramequins.', 2, 1),
+(2, 'Casser les œufs dans les ramequins.', 3, 2),
+(2, 'Ajouter la crème fraîche et assaisonner.', 3, 3),
+(2, 'Cuire au bain-marie pendant 5 minutes.', 5, 4);
+
+-- Salade César
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(3, 'Laver et sécher la laitue.', 5, 1),
+(3, 'Couper les tomates en dés.', 3, 2),
+(3, 'Ajouter le fromage râpé et assaisonner.', 5, 3),
+(3, 'Mélanger et servir.', 2, 4);
+
+-- Soupe froide de concombre
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(4, 'Éplucher le concombre et le couper en morceaux.', 5, 1),
+(4, "Mixer le concombre avec le yaourt et l\'ail.", 3, 2),
+(4, 'Ajouter la menthe et le jus de citron.', 2, 3),
+(4, 'Réfrigérer avant de servir.', 5, 4);
+
+-- Bruschetta
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(5, 'Griller les tranches de pain.', 5, 1),
+(5, 'Couper les tomates en petits dés.', 3, 2),
+(5, "Frotter les tranches de pain avec l\'ail.", 2, 3),
+(5, "Ajouter les tomates, le basilic et l\'huile d\'olive sur le pain.", 5, 4);
+
+-- Tartare de saumon
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(6, 'Couper le saumon en petits dés.', 5, 1),
+(6, "Couper l\'avocat en dés.", 5, 2),
+(6, "Mélanger le saumon et l\'avocat avec le jus de citron.", 5, 3),
+(6, 'Assaisonner et servir frais.', 5, 4);
+
+-- Velouté de champignons
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(7, 'Émincer les oignons et les champignons.', 5, 1),
+(7, 'Faire revenir les oignons et champignons dans une poêle.', 5, 2),
+(7, 'Ajouter la crème et laisser mijoter.', 5, 3),
+(7, 'Mixer le tout pour obtenir une texture veloutée.', 5, 4);
+
+-- Carpaccio de betterave
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(8, 'Couper les betteraves en fines tranches.', 5, 1),
+(8, 'Disposer les tranches sur une assiette.', 3, 2),
+(8, 'Ajouter le chèvre, les noix et la roquette.', 5, 3),
+(8, 'Assaisonner avec du sel et du poivre.', 2, 4);
+
+-- Mini quiches au fromage
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(9, 'Préchauffer le four à 180°C.', 5, 1),
+(9, 'Étaler la pâte brisée dans des moules à quiches.', 5, 2),
+(9, 'Mélanger les œufs avec le fromage râpé.', 5, 3),
+(9, 'Verser le mélange sur la pâte et enfourner.', 20, 4);
+
+-- Gaspacho
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(10, 'Couper les tomates, concombres et poivrons en morceaux.', 5, 1),
+(10, "Mixer tous les légumes avec l\'huile et le vinaigre.", 5, 2),
+(10, 'Assaisonner avec sel et poivre.', 3, 3),
+(10, 'Réfrigérer avant de servir.', 5, 4);
+
+-- Bouillinade de poissons
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(11, 'Superposer les poissons et légumes dans une cocotte.', 5, 1),
+(11, "Ajouter les épices et couvrir d\'eau.", 5, 2),
+(11, "Cuire à feu doux jusqu\'à ce que tout soit tendre.", 20, 3);
+
+-- Boles de picoulats
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(12, 'Mélanger le bœuf haché avec la farine et les épices.', 10, 1),
+(12, 'Former des boules de viande.', 10, 2),
+(12, 'Faire mijoter les boules avec les légumes et la sauce.', 40, 3);
+
+-- Blanquette de veau
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(13, 'Faire revenir la viande avec le beurre.', 10, 1),
+(13, 'Ajouter les légumes et laisser mijoter.', 20, 2),
+(13, 'Ajouter le lait et cuire doucement.', 90, 3);
+
+-- Poulet rôti au thym
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(14, 'Badigeonner le poulet avec du beurre et des épices.', 10, 1),
+(14, "Ajouter le thym et l\'ail.", 5, 2),
+(14, 'Rôtir au four.', 60, 3);
+
+-- Lasagnes végétariennes
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(15, 'Préparer les légumes et la sauce béchamel.', 15, 1),
+(15, 'Monter les lasagnes en couches.', 15, 2),
+(15, 'Cuire au four.', 40, 3);
+
+-- Gratin dauphinois
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(16, 'Couper les pommes de terre en fines tranches.', 5, 1),
+(16, 'Disposer les tranches en couches dans un plat.', 5, 2),
+(16, 'Ajouter la crème, le fromage et cuire.', 35, 3);
+
+-- Ratatouille
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(17, 'Couper tous les légumes en dés.', 10, 1),
+(17, 'Faire revenir les légumes avec des épices.', 10, 2),
+(17, 'Laisser mijoter doucement.', 20, 3);
+
+-- Bœuf bourguignon
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(18, 'Faire revenir le bœuf avec les légumes.', 15, 1),
+(18, 'Ajouter le vin rouge et laisser mijoter.', 105, 2);
+
+-- Curry de légumes
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(19, 'Faire revenir les légumes avec les épices.', 10, 1),
+(19, 'Ajouter le lait de coco et laisser mijoter.', 20, 2);
+
+-- Tagliatelles au saumon
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(20, "Cuire les pâtes dans de l\'eau bouillante.", 5, 1),
+(20, 'Ajouter le saumon et la crème.', 5, 2);
+
+-- Mousse au chocolat
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(21, 'Faire fondre le chocolat au bain-marie.', 5, 1),
+(21, 'Battre les œufs avec le sucre.', 5, 2),
+(21, 'Incorporer délicatement le chocolat fondu aux œufs battus.', 5, 3);
+
+-- Tarte aux pommes
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(22, 'Étaler la pâte dans un moule.', 5, 1),
+(22, 'Éplucher et couper les pommes en tranches.', 10, 2),
+(22, 'Disposer les pommes sur la pâte, saupoudrer de sucre et ajouter des morceaux de beurre.', 5, 3),
+(22, 'Cuire au four.', 30, 4);
+
+-- Crème brûlée
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(23, 'Mélanger la crème, le sucre et les œufs.', 5, 1),
+(23, 'Cuire le mélange au bain-marie.', 25, 2),
+(23, 'Caraméliser avec du sucre au chalumeau.', 5, 3);
+
+-- Tiramisu
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(24, 'Préparer une crème avec le mascarpone, le sucre et les jaunes d’œufs.', 10, 1),
+(24, 'Tremper les biscuits dans le café.', 5, 2),
+(24, 'Monter le tiramisu en couches.', 5, 3);
+
+-- Fondant au chocolat
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(25, 'Faire fondre le chocolat avec le beurre.', 5, 1),
+(25, 'Mélanger avec les œufs battus, la farine et le sucre.', 5, 2),
+(25, 'Cuire brièvement au four.', 10, 3);
+
+-- Clafoutis aux cerises
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(26, 'Préparer un appareil avec les œufs, la crème et le sucre.', 5, 1),
+(26, 'Disposer les cerises dans un moule.', 5, 2),
+(26, 'Verser le mélange sur les cerises et cuire.', 40, 3);
+
+-- Panna cotta
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(27, 'Faire chauffer la crème avec le sucre.', 5, 1),
+(27, 'Ajouter la gélatine et bien mélanger.', 5, 2),
+(27, 'Réfrigérer.', 0, 3);
+
+-- Millefeuille
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(28, 'Cuire les couches de pâte feuilletée.', 15, 1),
+(28, 'Préparer une crème pâtissière.', 10, 2),
+(28, 'Monter les millefeuilles en couches alternées.', 5, 3);
+
+-- Cheesecake
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(29, 'Préparer une base biscuitée.', 10, 1),
+(29, 'Mélanger le fromage frais, la crème et le sucre.', 10, 2),
+(29, 'Verser le mélange sur la base et cuire.', 40, 3);
+
+-- Tarte au citron meringuée
+INSERT INTO process_steps (recipe_id, description, duration, step_order) VALUES
+(30, 'Préparer une pâte sablée et la précuire.', 10, 1),
+(30, 'Préparer une crème au citron.', 10, 2),
+(30, 'Ajouter la meringue et cuire à nouveau.', 20, 3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Feuilleté au crabe
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(1, 1); -- Four
+
+-- Œufs cocotte
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(2, 1); -- Four
+
+-- Salade César
+-- Pas d'équipement requis
+
+-- Soupe froide de concombre
+-- Pas d'équipement requis
+
+-- Bruschetta
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(5, 7); -- Grille-pain
+
+-- Tartare de saumon
+-- Pas d'équipement requis
+
+-- Velouté de champignons
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(7, 4); -- Foyer de cuisson
+
+-- Carpaccio de betterave
+-- Pas d'équipement requis
+
+-- Mini quiches au fromage
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(9, 1); -- Four
+
+-- Gaspacho
+-- Pas d'équipement requis
+
+-- Bouillinade de poissons
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(11, 4); -- Foyer de cuisson
+
+-- Boles de picoulats
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(12, 4); -- Foyer de cuisson
+
+-- Blanquette de veau
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(13, 4); -- Foyer de cuisson
+
+-- Poulet rôti au thym
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(14, 1); -- Four
+
+-- Lasagnes végétariennes
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(15, 1); -- Four
+
+-- Gratin dauphinois
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(16, 1); -- Four
+
+-- Ratatouille
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(17, 4); -- Foyer de cuisson
+
+-- Bœuf bourguignon
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(18, 4); -- Foyer de cuisson
+
+-- Curry de légumes
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(19, 4); -- Foyer de cuisson
+
+-- Tagliatelles au saumon
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(20, 4); -- Foyer de cuisson
+
+-- Mousse au chocolat
+-- Pas d'équipement requis
+
+-- Tarte aux pommes
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(22, 1); -- Four
+
+-- Crème brûlée
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(23, 1); -- Four
+
+-- Tiramisu
+-- Pas d'équipement requis
+
+-- Fondant au chocolat
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(25, 1); -- Four
+
+-- Clafoutis aux cerises
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(26, 1); -- Four
+
+-- Panna cotta
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(27, 4); -- Foyer de cuisson
+
+-- Millefeuille
+-- Pas d'équipement requis
+
+-- Cheesecake
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(29, 1); -- Four
+
+-- Tarte au citron meringuée
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+(30, 1); -- Four
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Feuilleté au crabe
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(1, 1), -- Four
+(1, 2), -- Couteau
+(1, 3); -- Planche à découper
+
+-- Œufs cocotte
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(2, 1), -- Four
+(2, 5), -- Ramequins
+(2, 6); -- Bain-marie
+
+-- Salade César
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(3, 3), -- Saladier
+(3, 2); -- Couteau
+
+-- Soupe froide de concombre
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(4, 7), -- Épluche-légumes
+(4, 8), -- Blender
+(4, 9); -- Saladier
+
+-- Bruschetta
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(5, 10), -- Grille-pain
+(5, 2),  -- Couteau
+(5, 3);  -- Planche à découper
+
+-- Tartare de saumon
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(6, 2),  -- Couteau
+(6, 3),  -- Planche à découper
+(6, 9);  -- Saladier
+
+-- Velouté de champignons
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(7, 2),  -- Couteau
+(7, 3),  -- Planche à découper
+(7, 11); -- Poêle
+
+-- Carpaccio de betterave
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(8, 2),  -- Couteau
+(8, 3),  -- Planche à découper
+(8, 9);  -- Assiette de service
+
+-- Mini quiches au fromage
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(9, 12), -- Rouleau à pâtisserie
+(9, 13), -- Moules à quiches
+(9, 1);  -- Four
+
+-- Gaspacho
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(10, 8), -- Blender
+(10, 9); -- Saladier
+
+-- Bouillinade de poissons
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(11, 11), -- Cocotte
+(11, 2),  -- Couteau
+(11, 3);  -- Planche à découper
+
+-- Boles de picoulats
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(12, 11), -- Cocotte
+(12, 2),  -- Couteau
+(12, 3);  -- Planche à découper
+
+-- Blanquette de veau
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(13, 11), -- Cocotte
+(13, 1),  -- Poêle
+(13, 2);  -- Couteau
+
+-- Poulet rôti au thym
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(14, 1),  -- Four
+(14, 2),  -- Couteau
+(14, 3);  -- Planche à découper
+
+-- Lasagnes végétariennes
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(15, 1),  -- Four
+(15, 11), -- Plat à gratin
+(15, 3);  -- Planche à découper
+
+-- Gratin dauphinois
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(16, 1),  -- Four
+(16, 11), -- Plat à gratin
+(16, 2);  -- Couteau
+
+-- Ratatouille
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(17, 11), -- Poêle
+(17, 2),  -- Couteau
+(17, 3);  -- Planche à découper
+
+-- Bœuf bourguignon
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(18, 11), -- Cocotte
+(18, 2),  -- Couteau
+(18, 3);  -- Planche à découper
+
+-- Curry de légumes
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(19, 11), -- Poêle
+(19, 2),  -- Couteau
+(19, 3);  -- Planche à découper
+
+-- Tagliatelles au saumon
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(20, 8),  -- Marmite
+(20, 2),  -- Couteau
+(20, 3);  -- Planche à découper
+
+-- Mousse au chocolat
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(21, 2), -- Casserole
+(21, 3), -- Bol
+(21, 4); -- Fouet
+
+-- Tarte aux pommes
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(22, 1), -- Four
+(22, 11), -- Moule
+(22, 2); -- Couteau
+
+-- Crème brûlée
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(23, 2), -- Casserole
+(23, 3), -- Bol
+(23, 12); -- Chalumeau
+
+-- Tiramisu
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(24, 3), -- Bol
+(24, 5); -- Spatule
+
+-- Fondant au chocolat
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(25, 2), -- Casserole
+(25, 3), -- Bol
+(25, 11); -- Moule
+
+-- Clafoutis aux cerises
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(26, 1), -- Four
+(26, 11); -- Moule
+
+-- Panna cotta
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(27, 2), -- Casserole
+(27, 3); -- Bol
+
+-- Millefeuille
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(28, 1), -- Four
+(28, 4); -- Fouet
+
+-- Cheesecake
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(29, 1), -- Four
+(29, 11); -- Moule
+
+-- Tarte au citron meringuée
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+(30, 1), -- Four
+(30, 12); -- Chalumeau
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Insérer les ustensiles avec leur quantité
+INSERT INTO ustensils (name, total_quantity, available_quantity, status, is_clean) VALUES
+('Couteau de chef', 10, 10, 'Disponible', 1),
+('Planche à découper', 10, 10, 'Disponible', 1),
+('Poêle', 5, 5, 'Disponible', 1),
+('Casserole', 8, 8, 'Disponible', 1),
+('Fouet', 5, 5, 'Disponible', 1),
+('Cuillère en bois', 10, 10, 'Disponible', 1),
+('Saladier', 8, 8, 'Disponible', 1),
+('Assiette', 50, 50, 'Disponible', 1),
+('Fourchette', 50, 50, 'Disponible', 1),
+('Couteau à steak', 20, 20, 'Disponible', 1),
+('Mixeur', 2, 2, 'Disponible', 1),
+('Presse-ail', 3, 3, 'Disponible', 1),
+('Râpe', 4, 4, 'Disponible', 1),
+('Passoire', 4, 4, 'Disponible', 1),
+('Louche', 5, 5, 'Disponible', 1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Insérer les équipements avec leurs capacités
+INSERT INTO equipment (name, max_capacity, current_usage, status, stored_recipes) VALUES
+('Four', 5, 0, 'Disponible', NULL),           -- Peut contenir jusqu'à 5 plats simultanément
+('Réfrigérateur', 50, 0, 'Disponible', NULL), -- Peut stocker jusqu'à 50 recettes
+('Micro-ondes', 2, 0, 'Disponible', NULL),    -- Peut chauffer 2 plats simultanément
+('Foyer de cuisson', 6, 0, 'Disponible', NULL), -- 6 foyers disponibles
+('Chambre froide', 100, 0, 'Disponible', NULL), -- Grande capacité pour le stockage
+('Lave-vaisselle', 30, 0, 'Disponible', NULL), -- Peut laver jusqu'à 30 ustensiles en même temps
+('Grille-pain', 2, 0, 'Disponible', NULL),
+('Plancha', 4, 0, 'Disponible', NULL),        -- Peut griller 4 plats simultanément
+('Friteuse', 3, 0, 'Disponible', NULL),       -- Peut frire 3 portions à la fois
+('Magasin de stockage', 200, 0, 'Disponible', NULL); -- Stock pour les ingrédients
+
+
+

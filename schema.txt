@@ -1,0 +1,467 @@
+-- Création de la base de données
+CREATE DATABASE RestaurantManagement;
+
+-- Se connecter à la base de données
+\c RestaurantManagement;
+
+-- 1. Création des Tables
+-- Table des recettes
+CREATE TABLE recipes (
+    recipe_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    preparation_time INT NOT NULL, -- en minutes
+    cooking_time INT NOT NULL, -- en minutes
+    description TEXT NOT NULL
+);
+
+-- Table des ingrédients
+CREATE TABLE ingredients (
+    ingredient_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    unit VARCHAR(50) NOT NULL, -- g, ml, pièce, etc.
+    stock_quantity INT NOT NULL DEFAULT 0 -- Quantité disponible
+);
+
+-- Table de liaison recettes-ingrédients
+CREATE TABLE recipe_ingredients (
+    recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ingredient_id INT REFERENCES ingredients(ingredient_id) ON DELETE CASCADE,
+    quantity_needed INT NOT NULL,
+    PRIMARY KEY (recipe_id, ingredient_id)
+);
+
+-- Table des ustensiles
+CREATE TABLE ustensils (
+    ustensil_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Disponible' -- Disponible, En utilisation, Hors service
+);
+
+-- Table des équipements
+CREATE TABLE equipment (
+    equipment_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    max_capacity INT DEFAULT NULL, -- Null pour les équipements sans capacité définie
+    current_usage INT DEFAULT 0, -- Capacité actuellement utilisée
+    status VARCHAR(50) DEFAULT 'Disponible'
+);
+
+-- Table de liaison recettes-ustensiles
+CREATE TABLE recipe_ustensils (
+    recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ustensil_id INT REFERENCES ustensils(ustensil_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, ustensil_id)
+);
+
+-- Table de liaison recettes-équipements
+CREATE TABLE recipe_equipment (
+    recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    equipment_id INT REFERENCES equipment(equipment_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, equipment_id)
+);
+
+-- Table des processus (étapes des recettes)
+CREATE TABLE process_steps (
+    step_id SERIAL PRIMARY KEY,
+    recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    duration INT NOT NULL, -- Durée en minutes
+    step_order INT NOT NULL -- Ordre des étapes
+);
+
+-- Table des tâches
+CREATE TABLE tasks (
+    task_id SERIAL PRIMARY KEY,
+    recipe_id INT REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT,
+    estimated_time INT NOT NULL,
+    status VARCHAR(50) DEFAULT, 'En attente' -- En attente, En cours, Terminé
+    assigned INT NOT NULL DEFAULT 0
+);
+
+-- Table de gestion des matériaux
+CREATE TABLE material_stock (
+    material_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100), -- Exemple : Vaisselle, Textiles, Autres
+    quantity INT NOT NULL DEFAULT 0
+);
+
+-- Table de liaison tâches-FIFO
+CREATE TABLE task_queue (
+    task_id INT REFERENCES tasks(task_id) ON DELETE CASCADE,
+    queue_position SERIAL PRIMARY KEY -- Ordre FIFO basé sur SERIAL
+);
+
+
+
+
+
+
+
+-- 2. Insertion des Données
+
+
+
+-- 2.1 Recettes
+-- Insertion des recettes (Entrées)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Feuilleté au crabe', 10, 20, 'Mélanger les ingrédients, garnir la pâte et cuire.'),
+('Œufs cocotte', 10, 5, 'Cuire blancs au bain-marie, ajouter jaunes.'),
+('Salade César', 15, 0, 'Mélanger laitue avec garnitures.'),
+('Soupe froide de concombre', 10, 0, 'Mixer concombre et yaourt, ajouter ail, menthe, citron.'),
+('Bruschetta', 10, 5, 'Griller pain, ajouter mélange tomate-ail-huile-basilic.'),
+('Tartare de saumon', 15, 0, 'Couper saumon et avocat en dés, assaisonner avec citron.'),
+('Velouté de champignons', 10, 15, 'Faire revenir oignon et champignons, ajouter crème, mixer.'),
+('Carpaccio de betterave', 10, 0, 'Couper betterave en tranches, garnir chèvre, noix, roquette.'),
+('Mini quiches au fromage', 15, 20, 'Garnir pâte, mélanger œufs et fromage, cuire.'),
+('Gaspacho', 15, 0, 'Mixer tous les ingrédients, servir froid.');
+
+-- Insertion des recettes (Plats)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Bouillinade de poissons', 10, 20, 'Superposer ingrédients dans cocotte, cuire.'),
+('Boles de picoulats', 60, 0, 'Former boules, mijoter avec légumes.'),
+('Blanquette de veau', 10, 120, 'Faire revenir viande, mijoter avec légumes.'),
+('Poulet rôti au thym', 15, 60, 'Badigeonner poulet, rôtir avec thym et ail.'),
+('Lasagnes végétariennes', 20, 40, 'Superposer couches légumes, béchamel, pâte, cuire.'),
+('Gratin dauphinois', 15, 45, 'Disposer pommes de terre en couches, cuire avec crème.'),
+('Ratatouille', 20, 30, 'Faire revenir légumes, mijoter.'),
+('Bœuf bourguignon', 20, 120, 'Faire revenir viande, mijoter avec vin et légumes.'),
+('Curry de légumes', 15, 30, 'Cuire légumes avec lait de coco et épices.'),
+('Tagliatelles au saumon', 15, 10, 'Cuire pâtes, mélanger avec saumon et crème.');
+
+-- Insertion des recettes (Desserts)
+INSERT INTO recipes (name, preparation_time, cooking_time, description) VALUES
+('Mousse au chocolat', 15, 0, 'Faire fondre chocolat, incorporer œufs battus.'),
+('Tarte aux pommes', 20, 30, 'Garnir pâte, ajouter pommes, cuire.'),
+('Crème brûlée', 15, 30, 'Cuire crème au bain-marie, caraméliser avec sucre.'),
+('Tiramisu', 20, 0, 'Monter mascarpone, alterner avec biscuits imbibés de café.'),
+('Fondant au chocolat', 15, 10, 'Mélanger ingrédients, cuire brièvement.'),
+('Clafoutis aux cerises', 15, 40, 'Verser mélange sur cerises, cuire.'),
+('Panna cotta', 10, 0, 'Chauffer crème, ajouter gélatine, réfrigérer.'),
+('Millefeuille', 30, 0, 'Cuire pâte, alterner couches avec crème.'),
+('Cheesecake', 20, 60, 'Préparer base biscuitée, garnir fromage, cuire.'),
+('Tarte au citron meringuée', 30, 40, 'Garnir pâte de crème citron, ajouter meringue, cuire.');
+
+
+
+
+
+
+
+
+
+-- 2.4 Ustensiles
+-- Insertion des ustensiles
+INSERT INTO ustensils (name, status) VALUES
+('Four', 'Disponible'),
+('Bain-marie', 'Disponible'),
+('Casserole', 'Disponible'),
+('Mixeur', 'Disponible'),
+('Mandoline', 'Disponible'),
+('Moule à quiches', 'Disponible'),
+('Rouleau à pâtisserie', 'Disponible'),
+('Grille-pain', 'Disponible'),
+('Couteau de cuisine', 'Disponible'),
+('Bol à salade', 'Disponible');
+
+
+
+
+
+
+-- 2.5 Recettes-Ustensiles
+-- Insertion des ustensiles pour chaque recette
+INSERT INTO recipe_ustensils (recipe_id, ustensil_id) VALUES
+-- Entrées
+(1, 1), -- Feuilleté au crabe : Four
+(1, 9), -- Feuilleté au crabe : Bol
+(1, 10), -- Feuilleté au crabe : Couteau
+(2, 2), -- Œufs cocotte : Bain-marie
+(2, 10), -- Œufs cocotte : Couteau
+(3, 10), -- Salade César : Couteau
+(3, 9), -- Salade César : Bol
+(4, 4), -- Soupe froide de concombre : Mixeur
+(4, 10), -- Soupe froide de concombre : Couteau
+(5, 8), -- Bruschetta : Grille-pain
+(5, 10), -- Bruschetta : Couteau
+(6, 10), -- Tartare de saumon : Couteau
+(6, 9), -- Tartare de saumon : Bol
+(7, 3), -- Velouté de champignons : Casserole
+(7, 4), -- Velouté de champignons : Mixeur
+(7, 10), -- Velouté de champignons : Couteau
+(8, 10), -- Carpaccio de betterave : Mandoline
+(8, 9), -- Carpaccio de betterave : Bol
+(9, 7), -- Mini quiches au fromage : Moule à quiches
+(9, 1), -- Mini quiches au fromage : Four
+(10, 4), -- Gaspacho : Mixeur
+-- Plats
+(11, 5), -- Bouillinade de poissons : Cocotte
+(11, 10), -- Bouillinade de poissons : Couteau
+(12, 5), -- Boles de picoulats : Cocotte
+(12, 9), -- Boles de picoulats : Bol
+(13, 5), -- Blanquette de veau : Cocotte
+(13, 10), -- Blanquette de veau : Couteau
+(14, 1), -- Poulet rôti au thym : Four
+(14, 10), -- Poulet rôti au thym : Couteau
+(15, 5), -- Lasagnes végétariennes : Cocotte
+(15, 10), -- Lasagnes végétariennes : Couteau
+(16, 6), -- Gratin dauphinois : Plat à gratin
+(16, 10), -- Gratin dauphinois : Couteau
+(17, 5), -- Ratatouille : Cocotte
+(17, 10), -- Ratatouille : Couteau
+(18, 5), -- Bœuf bourguignon : Cocotte
+(18, 10), -- Bœuf bourguignon : Couteau
+(19, 5), -- Curry de légumes : Cocotte
+(19, 10), -- Curry de légumes : Couteau
+(20, 3), -- Tagliatelles au saumon : Casserole
+-- Desserts
+(21, 4), -- Mousse au chocolat : Bol
+(21, 6), -- Mousse au chocolat : Bain-marie
+(22, 1), -- Tarte aux pommes : Four
+(22, 7), -- Tarte aux pommes : Rouleau à pâtisserie
+(23, 2), -- Crème brûlée : Bain-marie
+(23, 9), -- Crème brûlée : Ramequins
+(24, 9), -- Tiramisu : Bol
+(25, 1), -- Fondant au chocolat : Four
+(25, 9), -- Fondant au chocolat : Bol
+(26, 1), -- Clafoutis aux cerises : Four
+(26, 9), -- Clafoutis aux cerises : Bol
+(27, 9), -- Panna cotta : Bol
+(28, 1), -- Millefeuille : Rouleau à pâtisserie
+(29, 9), -- Cheesecake : Bol
+(29, 1), -- Cheesecake : Four
+(30, 1), -- Tarte au citron meringuée : Four
+(30, 9); -- Tarte au citron meringuée : Bol
+
+
+
+
+-- 2.6 Équipements
+-- Insertion des équipements
+INSERT INTO equipment (name, max_capacity, status) VALUES
+('Réfrigérateur', 10, 'Disponible'),
+('Congélateur', 20, 'Disponible'),
+('Machine à laver', NULL, 'Disponible'),
+('Évier', NULL, 'Disponible'),
+('Lave-vaisselle', 24, 'Disponible');
+
+
+
+
+
+-- 2.7 Recettes-Équipements
+-- Insertion des équipements pour chaque recette
+INSERT INTO recipe_equipment (recipe_id, equipment_id) VALUES
+-- Entrées
+(1, 1), -- Feuilleté au crabe : Four
+(2, 1), -- Œufs cocotte : Réfrigérateur
+(3, 1), -- Salade César : Réfrigérateur
+(4, 1), -- Soupe froide de concombre : Réfrigérateur
+(5, 1), -- Bruschetta : Four
+-- Plats
+(11, 1), -- Bouillinade de poissons : Réfrigérateur
+(12, 1), -- Boles de picoulats : Réfrigérateur
+(13, 1), -- Blanquette de veau : Réfrigérateur
+(14, 1), -- Poulet rôti au thym : Four
+-- Desserts
+(21, 1), -- Mousse au chocolat : Réfrigérateur
+(22, 1), -- Tarte aux pommes : Réfrigérateur
+(23, 1), -- Crème brûlée : Réfrigérateur
+(24, 1), -- Tiramisu : Réfrigérateur;
+
+
+
+
+
+
+
+
+
+-- 2.9 Tâches
+INSERT INTO tasks (recipe_id, description, estimated_time, status, assigned) VALUES
+(1, 'Préparer Feuilleté au crabe', 30, 'En attente', 0),
+(2, 'Préparer Œufs cocotte', 15, 'En attente', 0),
+(12, 'Préparer Boles de picoulats', 60, 'En attente', 0),
+(15, 'Préparer Lasagnes végétariennes', 60, 'En attente', 0),
+(22, 'Préparer Tarte aux pommes', 50, 'En attente', 0),
+(5, 'Préparer Bruschetta', 15, 'En attente', 0),
+(17, 'Préparer Ratatouille', 50, 'En attente', 0),
+(28, 'Préparer Millefeuille', 30, 'En attente', 0),
+(17, 'Préparer Ratatouille', 50, 'En attente', 0),
+(10, 'Préparer Gaspacho', 15, 'En attente', 0),
+(26, 'Préparer Clafoutis aux cerises', 55, 'En attente', 0),
+(29, 'Préparer Cheesecake', 80, 'En attente', 0),
+(16, 'Préparer Gratin dauphinois', 60, 'En attente', 0),
+(7, 'Préparer Velouté de champignons', 25, 'En attente', 0),
+(21, 'Préparer Mousse au chocolat', 15, 'En attente', 0);
+
+
+
+
+
+
+-- 2.10 Matériaux
+INSERT INTO material_stock (name, category, quantity) VALUES
+('Assiettes petites', 'Vaisselle', 150),
+('Fourchettes', 'Couverts', 150),
+('Verres à eau', 'Vaisselle', 150),
+('Serviettes en tissu', 'Textiles', 150),
+('Bouteilles d’eau', 'Autres', 40);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 1. Création des Tables
+
+-- Table des recettes
+CREATE TABLE recipes (
+    recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    preparation_time INTEGER NOT NULL, -- en minutes
+    cooking_time INTEGER NOT NULL,     -- en minutes
+    description TEXT NOT NULL
+);
+
+-- Table des ingrédients
+CREATE TABLE ingredients (
+    ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    unit TEXT NOT NULL,               -- g, ml, pièce, etc.
+    stock_quantity INTEGER NOT NULL DEFAULT 0 -- Quantité disponible
+);
+
+-- Table de liaison recettes-ingrédients
+CREATE TABLE recipe_ingredients (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ingredient_id INTEGER REFERENCES ingredients(ingredient_id) ON DELETE CASCADE,
+    quantity_needed INTEGER NOT NULL,
+    PRIMARY KEY (recipe_id, ingredient_id)
+);
+
+-- Table des ustensiles
+CREATE TABLE ustensils (
+    ustensil_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    total_quantity INTEGER NOT NULL DEFAULT 0,     -- Quantité totale
+    available_quantity INTEGER NOT NULL DEFAULT 0, -- Quantité disponible
+    status TEXT DEFAULT 'Disponible',             -- Disponible, En cours d'utilisation, Hors service
+    used_by TEXT DEFAULT NULL,                    -- Identifiant de l'utilisateur actuel (Commis ou Plongeur)
+    is_clean INTEGER DEFAULT 1                    -- 1 = propre, 0 = sale
+);
+
+-- Table des équipements
+CREATE TABLE equipment (
+    equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    max_capacity INTEGER DEFAULT NULL,            -- Null pour les équipements sans capacité définie
+    current_usage INTEGER DEFAULT 0,              -- Capacité actuellement utilisée
+    status TEXT DEFAULT 'Disponible',             -- Disponible, En cours d'utilisation, Hors service
+    stored_recipes TEXT DEFAULT NULL              -- Recettes stockées, format JSON ou séparées par des virgules
+);
+
+-- Table de liaison recettes-ustensiles
+CREATE TABLE recipe_ustensils (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ustensil_id INTEGER REFERENCES ustensils(ustensil_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, ustensil_id)
+);
+
+-- Table de liaison recettes-équipements
+CREATE TABLE recipe_equipment (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    equipment_id INTEGER REFERENCES equipment(equipment_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, equipment_id)
+);
+
+-- Table des processus (étapes des recettes)
+CREATE TABLE process_steps (
+    step_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    duration INTEGER NOT NULL, -- Durée en minutes
+    step_order INTEGER NOT NULL -- Ordre des étapes
+);
+
+-- Table des tâches
+CREATE TABLE tasks (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT,
+    estimated_time INTEGER NOT NULL,
+    status TEXT DEFAULT 'En attente', -- En attente, En cours, Terminé
+    assigned INTEGER NOT NULL DEFAULT 0
+);
+
+-- Table de gestion des matériaux
+CREATE TABLE material_stock (
+    material_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    category TEXT,                     -- Exemple : Vaisselle, Textiles, Autres
+    quantity INTEGER NOT NULL DEFAULT 0 -- Quantité disponible
+);
+
+-- Table des notifications
+CREATE TABLE notifications (
+    notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Date de création de la notification
+    message TEXT NOT NULL,                          -- Contenu de la notification
+    status TEXT DEFAULT 'Non traité'               -- Statut : Non traité, Traité
+);
+
+-- Table de gestion des nettoyages
+CREATE TABLE cleaning_process (
+    cleaning_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ustensil_id INTEGER REFERENCES ustensils(ustensil_id) ON DELETE CASCADE,
+    cleaned_by TEXT,                        -- Qui a nettoyé (Commis ou Plongeur)
+    cleaned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Date du nettoyage
+);
+
+-- Table de liaison tâches-FIFO
+CREATE TABLE task_queue (
+    task_id INTEGER REFERENCES tasks(task_id) ON DELETE CASCADE,
+    queue_position INTEGER PRIMARY KEY AUTOINCREMENT -- Ordre FIFO basé sur AUTOINCREMENT
+);

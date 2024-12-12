@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QWidget" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1200</width>
+    <height>650</height>
+   </size>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: white;</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="leftColumn">
+     <property name="styleSheet">
+      <string notr="true">background-color: white;</string>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>1000</width>
+       <height>620</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QWidget" name="restaurantArea">
+        <property name="styleSheet">
+         <string notr="true">background-color: grey; border: 2px solid black; border-radius: 15px;</string>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+      </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="rightColumn">
+     <property name="styleSheet">
+      <string notr="true">background-color: white;</string>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>170</width>
+       <height>620</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="rightLayout">
+      <!-- Zone 1 : Titre -->
+      <item>
+       <widget class="QLabel" name="titleLabel">
+        <property name="text">
+         <string>Restauration</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: black; font-size: 20px; font-weight: bold; border: 1px solid black; padding: 5px;</string>
+        </property>
+        <property name="height">
+         <number>30</number>
+        </property>
+       </widget>
+      </item>
+      <!-- Zone 2 : Boutons -->
+      <item>
+       <widget class="QWidget" name="buttonArea">
+        <property name="Height">
+         <number>30</number>
+        </property>
+        <layout class="QHBoxLayout" name="buttonLayout">
+         <item>
+          <widget class="QPushButton" name="button1"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button2"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button3"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <!-- Zone 3 : Zone vide -->
+      <item>
+       <widget class="QWidget" name="emptyArea">
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid black;</string>
+        </property>
+       </widget>
+      </item>
+      <!-- Zone 4 : Heure -->
+      <item>
+       <widget class="QLabel" name="timeLabel">
+        <property name="text">
+         <string>00:00:00</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: black; font-size: 18px; border: 1px solid black; padding: 5px; height: 50px</string>
+        </property>
+        <property name="Height">
+         <number>30</number>
+        </property>
+       </widget>
+      </item>
+      <!-- Zone 5 : État -->
+      <item>
+       <widget class="QLabel" name="statusLabel">
+        <property name="text">
+         <string>Ouvert</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: black; font-size: 18px; border: 1px solid black; padding: 5px; height: 50px</string>
+        </property>
+        <property name="Height">
+         <number>30</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,18 @@
+[10:00] Gestionnaire de base de données initialisé.
+[10:00] Connexion à la base de données réussie.
+[10:00] Commis de Cuisine 1 démarré.
+[10:00] Chef de Partie 1 démarré.
+[10:01] Commis de Cuisine 2 démarré.
+[10:01] Chef de Partie 2 démarré.
+[10:01] Chef de Cuisine initialisé avec 2 chefs de partie.
+[10:01] Cycle de travail du Chef de Cuisine démarré.
+[10:01] Début du changement d'équipe.
+[10:00] Gestionnaire de base de données initialisé.
+[10:00] Connexion à la base de données réussie.
+[10:00] Commis de Cuisine 1 démarré.
+[10:00] Chef de Partie 1 démarré.
+[10:00] Commis de Cuisine 2 démarré.
+[10:00] Chef de Partie 2 démarré.
+[10:00] Chef de Cuisine initialisé avec 2 chefs de partie.
+[10:00] Cycle de travail du Chef de Cuisine démarré.
+[10:00] Début du changement d'équipe.

@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../../assets/images/play.png</file>
+        <file>../../assets/images/pause.png</file>
+        <file>../../assets/images/accelerate.png</file>
+        <file>../../assets/images/table_unique1.png</file>
+        <file>../../assets/images/table_unique2.png</file>
+        <file>../../assets/images/table_de_4.png</file>
+        <file>../../assets/images/table_de_6.png</file>
+        <file>../../assets/images/table_de_8(1).png</file>
+        <file>../../assets/images/table_de_8(2).png</file>
+        <file>../../assets/images/table_de_10.png</file>
+        <file>../../assets/images/table_de_12.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,863 @@
+Voici la nouvelle base de données implémentée :
+
+
+-- 1. Création des Tables
+
+-- Table des recettes
+CREATE TABLE recipes (
+    recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    preparation_time INTEGER NOT NULL, -- en minutes
+    cooking_time INTEGER NOT NULL,     -- en minutes
+    description TEXT NOT NULL
+);
+
+-- Table des ingrédients
+CREATE TABLE ingredients (
+    ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    unit TEXT NOT NULL,               -- g, ml, pièce, etc.
+    stock_quantity INTEGER NOT NULL DEFAULT 0 -- Quantité disponible
+);
+
+-- Table de liaison recettes-ingrédients
+CREATE TABLE recipe_ingredients (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ingredient_id INTEGER REFERENCES ingredients(ingredient_id) ON DELETE CASCADE,
+    quantity_needed INTEGER NOT NULL,
+    PRIMARY KEY (recipe_id, ingredient_id)
+);
+
+-- Table des ustensiles
+CREATE TABLE ustensils (
+    ustensil_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    total_quantity INTEGER NOT NULL DEFAULT 0,     -- Quantité totale
+    available_quantity INTEGER NOT NULL DEFAULT 0, -- Quantité disponible
+    status TEXT DEFAULT 'Disponible',             -- Disponible, En cours d'utilisation, Hors service
+    used_by TEXT DEFAULT NULL,                    -- Identifiant de l'utilisateur actuel (Commis ou Plongeur)
+    is_clean INTEGER DEFAULT 1                    -- 1 = propre, 0 = sale
+);
+
+-- Table des équipements
+CREATE TABLE equipment (
+    equipment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    max_capacity INTEGER DEFAULT NULL,            -- Null pour les équipements sans capacité définie
+    current_usage INTEGER DEFAULT 0,              -- Capacité actuellement utilisée
+    status TEXT DEFAULT 'Disponible',             -- Disponible, En cours d'utilisation, Hors service
+    stored_recipes TEXT DEFAULT NULL              -- Recettes stockées, format JSON ou séparées par des virgules
+);
+
+-- Table de liaison recettes-ustensiles
+CREATE TABLE recipe_ustensils (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    ustensil_id INTEGER REFERENCES ustensils(ustensil_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, ustensil_id)
+);
+
+-- Table de liaison recettes-équipements
+CREATE TABLE recipe_equipment (
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    equipment_id INTEGER REFERENCES equipment(equipment_id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, equipment_id)
+);
+
+-- Table des processus (étapes des recettes)
+CREATE TABLE process_steps (
+    step_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    duration INTEGER NOT NULL, -- Durée en minutes
+    step_order INTEGER NOT NULL -- Ordre des étapes
+);
+
+-- Table des tâches
+CREATE TABLE tasks (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+    description TEXT,
+    estimated_time INTEGER NOT NULL,
+    status TEXT DEFAULT 'En attente', -- En attente, En cours, Terminé
+    assigned INTEGER NOT NULL DEFAULT 0
+);
+
+-- Table des notifications
+CREATE TABLE notifications (
+    notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Date de création de la notification
+    message TEXT NOT NULL,                          -- Contenu de la notification
+    status TEXT DEFAULT 'Non traité'               -- Statut : Non traité, Traité
+);
+
+-- Table de gestion des nettoyages
+CREATE TABLE cleaning_process (
+    cleaning_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ustensil_id INTEGER REFERENCES ustensils(ustensil_id) ON DELETE CASCADE,
+    cleaned_by TEXT,                        -- Qui a nettoyé (Commis ou Plongeur)
+    cleaned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Date du nettoyage
+);
+
+-- Table de liaison tâches-FIFO
+CREATE TABLE task_queue (
+    task_id INTEGER REFERENCES tasks(task_id) ON DELETE CASCADE,
+    queue_position INTEGER PRIMARY KEY AUTOINCREMENT -- Ordre FIFO basé sur AUTOINCREMENT
+);
+
+
+
+
+
+
+
+
+Je veux donc que tu améliores les code en fonction de la base de données sans enlever les fonctionnalités, la gestion de processus :
+
+
+chefdecuisine.h :
+
+
+#ifndef CHEFDECUISINE_H
+#define CHEFDECUISINE_H
+
+#include <vector>
+#include <thread>
+#include <atomic>
+#include "../database/DatabaseManager.h"
+#include "ChefDePartie.h"
+
+class ChefDeCuisine {
+public:
+    ChefDeCuisine();
+    ~ChefDeCuisine();
+
+    void start(); // Démarrer le thread
+    void stop();  // Arrêter le thread
+
+private:
+    DatabaseManager& dbManager;
+    std::vector<ChefDePartie*> chefsDePartie;
+    std::thread threadCuisine;
+    std::atomic<bool> actif; // Flag pour arrêter proprement le thread
+    int prochainChef; // Suivi du prochain chef à assigner
+
+    void cycleDeTravail(); // Cycle de travail du Chef de Cuisine
+    void gererCommandes(); // Gérer les commandes
+    void distribuerTaches(); // Distribuer les tâches
+    void handleShiftChange();          // Gérer le changement d'équipe
+
+
+    // Méthodes auxiliaires
+    bool ingredientsDisponibles(int recipeId);
+    void mettreAJourStocks(int recipeId);
+    void afficherOrdreDeTraitement();
+    void afficherRedistribution();
+    bool isDayTeamActive;              // Indique si l'équipe de jour est active
+};
+
+#endif // CHEFDECUISINE_H
+
+
+
+
+chefdecuisine.cpp :
+
+
+#include "ChefDeCuisine.h"
+#include "../utils/Timer.h"
+#include "../utils/Logger.h"
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
+#include <chrono>
+#include <mutex>
+
+// Mutex global pour synchroniser les accès à la base de données
+extern std::mutex dbMutex;
+
+// Mutex global pour l'affichage
+extern std::mutex affichageMutex;
+
+ChefDeCuisine::ChefDeCuisine()
+    : dbManager(DatabaseManager::instance()), actif(false), prochainChef(0) {
+    // Initialiser 2 chefs de partie
+    for (int i = 0; i < 2; ++i) {
+        ChefDePartie* chef = new ChefDePartie(i + 1);
+        chefsDePartie.push_back(chef);
+        chef->start(); // Démarrer immédiatement les threads des chefs de partie
+    }
+    Logger::instance().log("Chef de Cuisine initialisé avec 2 chefs de partie.");
+}
+
+ChefDeCuisine::~ChefDeCuisine() {
+    stop();
+    for (ChefDePartie* chef : chefsDePartie) {
+        chef->stop();
+        delete chef;
+    }
+    Logger::instance().log("Chef de Cuisine et chefs de partie arrêtés.");
+}
+
+void ChefDeCuisine::start() {
+    actif = true;
+    threadCuisine = std::thread(&ChefDeCuisine::cycleDeTravail, this);
+    Logger::instance().log("Cycle de travail du Chef de Cuisine démarré.");
+}
+
+void ChefDeCuisine::stop() {
+    actif = false;
+    if (threadCuisine.joinable()) {
+        threadCuisine.join();
+    }
+    Logger::instance().log("Cycle de travail du Chef de Cuisine arrêté.");
+}
+
+void ChefDeCuisine::cycleDeTravail() {
+    while (actif) {
+        Timer& timer = Timer::instance();
+
+        if (!timer.isRestaurantOpen()) {
+            Logger::instance().log("Restaurant fermé. Arrêt des activités.");
+            std::this_thread::sleep_for(std::chrono::hours(1)); // Attente jusqu'à 10h
+            continue;
+        }
+
+        if ((timer.isDayShift() && !isDayTeamActive) || (timer.isNightShift() && isDayTeamActive)) {
+            handleShiftChange(); // Gérer le changement d'équipe
+        }
+
+        gererCommandes();
+        distribuerTaches();
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Attente simulée
+    }
+}
+
+void ChefDeCuisine::handleShiftChange() {
+    Logger::instance().log("Début du changement d'équipe.");
+    isDayTeamActive = !isDayTeamActive;
+
+    for (ChefDePartie* chef : chefsDePartie) {
+        chef->stop(); // Arrêter les threads actuels
+    }
+
+    // Attendre quelques secondes pour simuler la transition
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    for (ChefDePartie* chef : chefsDePartie) {
+        chef->start(); // Redémarrer avec la nouvelle équipe
+    }
+
+    Logger::instance().log("Changement d'équipe terminé.");
+}
+
+void ChefDeCuisine::gererCommandes() {
+    std::lock_guard<std::mutex> lock(dbMutex); // Synchronisation des accès à la base de données
+
+    QSqlQuery query(dbManager.getDatabase());
+
+    // Récupérer les commandes en attente non assignées
+    if (!query.exec("SELECT task_id, recipe_id FROM tasks WHERE status = 'En attente' AND assigned = 0 ORDER BY task_id")) {
+        qCritical() << "Erreur lors de la récupération des commandes en attente :" << query.lastError().text();
+        return;
+    }
+
+    QSqlQuery updateQueueQuery(dbManager.getDatabase());
+    int position = 1;
+
+    while (query.next()) {
+        int taskId = query.value("task_id").toInt();
+        int recipeId = query.value("recipe_id").toInt();
+
+        if (ingredientsDisponibles(recipeId)) {
+            mettreAJourStocks(recipeId);
+
+            // Ajouter la tâche dans la file task_queue
+            updateQueueQuery.prepare("INSERT INTO task_queue (task_id, queue_position) VALUES (:task_id, :queue_position)");
+            updateQueueQuery.bindValue(":task_id", taskId);
+            updateQueueQuery.bindValue(":queue_position", position++);
+            if (!updateQueueQuery.exec()) {
+                qCritical() << "Erreur lors de la mise à jour de task_queue :" << updateQueueQuery.lastError().text();
+            }
+
+            // Mettre à jour le statut en "En cours"
+            QSqlQuery updateTaskQuery(dbManager.getDatabase());
+            updateTaskQuery.prepare("UPDATE tasks SET status = 'En cours' WHERE task_id = :task_id");
+            updateTaskQuery.bindValue(":task_id", taskId);
+            if (!updateTaskQuery.exec()) {
+                qCritical() << "Erreur lors de la mise à jour de l'état de la tâche :" << updateTaskQuery.lastError().text();
+            } else {
+                Logger::instance().log("Tâche ID " + std::to_string(taskId) + " mise en cours.");
+            }
+        } else {
+            // Annuler la tâche si les ingrédients sont insuffisants
+            QSqlQuery cancelQuery(dbManager.getDatabase());
+            cancelQuery.prepare("UPDATE tasks SET status = 'Annulé' WHERE task_id = :task_id");
+            cancelQuery.bindValue(":task_id", taskId);
+            if (!cancelQuery.exec()) {
+                qCritical() << "Erreur lors de l'annulation de la tâche :" << cancelQuery.lastError().text();
+            } else {
+                Logger::instance().log("Tâche ID " + std::to_string(taskId) + " annulée (ingrédients insuffisants).");
+            }
+        }
+    }
+
+    afficherOrdreDeTraitement();
+}
+
+void ChefDeCuisine::distribuerTaches() {
+    std::lock_guard<std::mutex> lock(dbMutex); // Synchronisation des accès à la base de données
+
+    QSqlQuery query(dbManager.getDatabase());
+
+    // Récupérer les tâches en cours dans task_queue
+    if (!query.exec("SELECT tq.task_id, t.recipe_id FROM task_queue tq JOIN tasks t ON tq.task_id = t.task_id WHERE t.assigned = 0 AND t.status = 'En cours' ORDER BY tq.queue_position")) {
+        qCritical() << "Erreur lors de la récupération des tâches dans task_queue :" << query.lastError().text();
+        return;
+    }
+
+    while (query.next()) {
+        int recipeId = query.value("recipe_id").toInt();
+        int taskId = query.value("task_id").toInt();
+
+        // Distribuer la tâche à un chef de partie disponible
+        for (int i = 0; i < chefsDePartie.size(); ++i) {
+            int chefIndex = (prochainChef++) % static_cast<int>(chefsDePartie.size());
+            ChefDePartie* chef = chefsDePartie[chefIndex];
+
+            if (chef->peutPrendreTache()) {
+                chef->ajouterTache(recipeId);
+
+                // Mettre à jour la tâche comme assignée
+                QSqlQuery assignQuery(dbManager.getDatabase());
+                assignQuery.prepare("UPDATE tasks SET assigned = 1 WHERE task_id = :task_id");
+                assignQuery.bindValue(":task_id", taskId);
+                if (!assignQuery.exec()) {
+                    qCritical() << "Erreur lors de la mise à jour du statut :" << assignQuery.lastError().text();
+                } else {
+                    Logger::instance().log("Tâche ID " + std::to_string(taskId) + " assignée au Chef de Partie " + std::to_string(chefIndex + 1));
+                }
+                break;
+            }
+        }
+    }
+
+    afficherRedistribution();
+}
+
+bool ChefDeCuisine::ingredientsDisponibles(int recipeId) {
+    std::lock_guard<std::mutex> lock(dbMutex); // Synchronisation des accès à la base de données
+
+    QSqlQuery query(dbManager.getDatabase());
+
+    query.prepare(
+        "SELECT ri.ingredient_id, ri.quantity_needed, i.stock_quantity "
+        "FROM recipe_ingredients ri "
+        "JOIN ingredients i ON ri.ingredient_id = i.ingredient_id "
+        "WHERE ri.recipe_id = :recipe_id");
+    query.bindValue(":recipe_id", recipeId);
+
+    if (!query.exec()) {
+        qCritical() << "Erreur lors de la vérification des ingrédients :" << query.lastError().text();
+        return false;
+    }
+
+    while (query.next()) {
+        int stock = query.value("stock_quantity").toInt();
+        int needed = query.value("quantity_needed").toInt();
+
+        if (stock < needed) {
+            qDebug() << "Ingrédient insuffisant pour l'ID" << query.value("ingredient_id").toInt();
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void ChefDeCuisine::mettreAJourStocks(int recipeId) {
+    std::lock_guard<std::mutex> lock(dbMutex); // Synchronisation des accès à la base de données
+
+    QSqlQuery query(dbManager.getDatabase());
+
+    query.prepare(
+        "UPDATE ingredients "
+        "SET stock_quantity = stock_quantity - ("
+        "  SELECT ri.quantity_needed "
+        "  FROM recipe_ingredients ri "
+        "  WHERE ri.recipe_id = :recipe_id AND ri.ingredient_id = ingredients.ingredient_id "
+        ") "
+        "WHERE EXISTS ("
+        "  SELECT 1 "
+        "  FROM recipe_ingredients ri "
+        "  WHERE ri.recipe_id = :recipe_id AND ri.ingredient_id = ingredients.ingredient_id "
+        ")");
+    query.bindValue(":recipe_id", recipeId);
+
+    if (!query.exec()) {
+        qCritical() << "Erreur lors de la mise à jour des stocks :" << query.lastError().text();
+    } else {
+        Logger::instance().log("Stocks mis à jour pour la recette " + std::to_string(recipeId));
+    }
+}
+
+void ChefDeCuisine::afficherOrdreDeTraitement() {
+    std::lock_guard<std::mutex> lock(affichageMutex);
+    qDebug() << "Ordre de traitement des recettes (FIFO) :";
+
+    QSqlQuery query(dbManager.getDatabase());
+    if (query.exec("SELECT tq.queue_position, t.recipe_id "
+                   "FROM task_queue tq JOIN tasks t ON tq.task_id = t.task_id "
+                   "ORDER BY tq.queue_position")) {
+        while (query.next()) {
+            qDebug() << "Position :" << query.value("queue_position").toInt()
+            << "| Recette ID :" << query.value("recipe_id").toInt();
+        }
+    } else {
+        qCritical() << "Erreur lors de l'affichage de l'ordre des traitements :" << query.lastError().text();
+    }
+}
+
+void ChefDeCuisine::afficherRedistribution() {
+    std::lock_guard<std::mutex> lock(affichageMutex);
+    for (ChefDePartie* chef : chefsDePartie) {
+        chef->afficherTaches();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+chefdepartie.h :
+
+
+
+#ifndef CHEFDEPARTIE_H
+#define CHEFDEPARTIE_H
+
+#include <mutex>
+#include <thread>
+#include <queue>
+#include <atomic>
+#include "../actors/CommisCuisine.h"
+
+class ChefDePartie {
+public:
+    ChefDePartie(int id);               // Constructeur
+    ~ChefDePartie();                    // Destructeur
+
+    void start();                       // Démarrer le thread
+    void stop();                        // Arrêter le thread
+    bool peutPrendreTache() const;      // Vérifier si le chef peut prendre une tâche
+    void ajouterTache(int recipeId);    // Ajouter une tâche à la file
+    void afficherTaches() const;        // Afficher les tâches en cours
+
+private:
+    int id;                             // Identifiant du chef de partie
+    std::queue<int> taches;             // File des tâches
+    mutable std::mutex mutexTaches;     // Mutex pour protéger la file des tâches
+    std::thread threadTaches;           // Thread du chef de partie
+    std::atomic<bool> actif;            // Flag pour arrêter le thread proprement
+
+    CommisCuisine* commis;              // Commis de cuisine associé au chef
+
+    void cycleDeTravail();              // Fonction principale du thread
+    void assignerTacheCommis(int recipeId); // Assigner une tâche au commis
+};
+
+#endif // CHEFDEPARTIE_H
+
+
+
+
+
+chefdepartie.cpp :
+
+
+
+
+#include "ChefDePartie.h"
+#include "../database/DatabaseManager.h"
+#include "../utils/Logger.h"
+#include <QSqlQuery>
+#include <QSqlError>
+#include <iostream>
+#include <chrono>
+#include <thread>
+
+extern std::mutex dbMutex; // Mutex global pour synchronisation avec la base
+
+ChefDePartie::ChefDePartie(int id)
+    : id(id), actif(false), commis(new CommisCuisine(id)) {}
+
+ChefDePartie::~ChefDePartie() {
+    stop();
+    delete commis; // Libérer la mémoire du commis
+}
+
+void ChefDePartie::start() {
+    if (actif) return; // Éviter de démarrer plusieurs fois
+    actif = true;
+    commis->start(); // Démarrer le thread du commis
+    threadTaches = std::thread(&ChefDePartie::cycleDeTravail, this);
+    Logger::instance().log("Chef de Partie " + std::to_string(id) + " démarré.");
+}
+
+void ChefDePartie::stop() {
+    actif = false;
+    commis->stop(); // Arrêter le thread du commis
+    if (threadTaches.joinable()) {
+        threadTaches.join(); // Attendre la fin du thread
+    }
+    Logger::instance().log("Chef de Partie " + std::to_string(id) + " arrêté.");
+}
+
+bool ChefDePartie::peutPrendreTache() const {
+    std::lock_guard<std::mutex> lock(mutexTaches);
+    return taches.size() < 5; // Limite de 5 tâches simultanées
+}
+
+void ChefDePartie::ajouterTache(int recipeId) {
+    {
+        std::lock_guard<std::mutex> lock(mutexTaches);
+        taches.push(recipeId);
+    }
+    Logger::instance().log("Chef de Partie " + std::to_string(id) +
+                           " a reçu une tâche pour la recette " + std::to_string(recipeId));
+}
+
+void ChefDePartie::afficherTaches() const {
+    std::lock_guard<std::mutex> lock(mutexTaches);
+    std::cout << "Chef de Partie " << id << " traite les tâches suivantes : ";
+    std::queue<int> temp = taches; // Copier la file pour l'affichage
+    while (!temp.empty()) {
+        std::cout << temp.front() << " ";
+        temp.pop();
+    }
+    std::cout << std::endl;
+}
+
+void ChefDePartie::cycleDeTravail() {
+    while (actif) {
+        int recipeId = -1;
+
+        {
+            std::lock_guard<std::mutex> lock(mutexTaches);
+            if (!taches.empty()) {
+                recipeId = taches.front();
+                taches.pop();
+            }
+        }
+
+        if (recipeId != -1) {
+            assignerTacheCommis(recipeId);
+        } else {
+            // Si aucune tâche, attendre un peu avant de vérifier à nouveau
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    }
+}
+
+void ChefDePartie::assignerTacheCommis(int recipeId) {
+    Logger::instance().log("Chef de Partie " + std::to_string(id) +
+                           " assigne une tâche au Commis de Cuisine pour la recette " + std::to_string(recipeId));
+
+    commis->ajouterTache("Étape de la recette", recipeId); // Ajout de la tâche au commis
+    Logger::instance().log("Tâche assignée au Commis de Cuisine " + std::to_string(id));
+}
+
+
+
+
+
+
+
+
+
+
+
+commiscuisine.h :
+
+
+
+#ifndef COMMISCUISINE_H
+#define COMMISCUISINE_H
+
+#include "../database/DatabaseManager.h"
+#include "../utils/Logger.h"
+#include <thread>
+#include <mutex>
+#include <atomic>
+#include <queue>
+#include <string>
+#include <condition_variable>
+
+class CommisCuisine {
+public:
+    explicit CommisCuisine(int id);
+    ~CommisCuisine();
+
+    void start();                      // Démarrer le thread
+    void stop();                       // Arrêter le thread
+    void ajouterTache(const std::string& tache, int recetteId); // Ajouter une tâche
+    void traiterTache();               // Cycle principal pour traiter les tâches
+    void notifierUstensileDisponible(int ustensileId); // Notification d'ustensile disponible
+
+private:
+    int id;                            // ID du commis
+    std::queue<std::pair<std::string, int>> taches; // File des tâches (description + recetteId)
+    std::thread threadCommis;          // Thread du commis
+    std::atomic<bool> actif;           // Indique si le commis est actif
+    std::mutex mutexTaches;            // Mutex pour protéger l'accès à la file des tâches
+    std::condition_variable condition; // Condition pour synchroniser le travail
+
+    bool verifierDisponibiliteUstensile(int ustensileId);    // Vérifier la disponibilité d'un ustensile
+    bool verifierDisponibiliteEquipement(int equipementId); // Vérifier la disponibilité d'un équipement
+    void traiterEtape(int recetteId, const std::string& etape); // Traiter une étape spécifique d'une recette
+};
+
+#endif // COMMISCUISINE_H
+
+
+
+
+commiscuisine.cpp :
+
+
+
+#include "CommisCuisine.h"
+#include "../utils/Logger.h"
+#include <chrono>
+#include <thread>
+#include <QSqlQuery>
+#include <QSqlError>
+
+extern std::mutex dbMutex; // Mutex global pour synchroniser la base de données
+
+CommisCuisine::CommisCuisine(int id) : id(id), actif(false) {}
+
+CommisCuisine::~CommisCuisine() {
+    stop();
+}
+
+void CommisCuisine::start() {
+    actif = true;
+    threadCommis = std::thread(&CommisCuisine::traiterTache, this);
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) + " démarré.");
+}
+
+void CommisCuisine::stop() {
+    actif = false;
+    if (threadCommis.joinable()) {
+        threadCommis.join();
+    }
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) + " arrêté.");
+}
+
+void CommisCuisine::ajouterTache(const std::string& tache, int recetteId) {
+    {
+        std::lock_guard<std::mutex> lock(mutexTaches);
+        taches.push({tache, recetteId});
+    }
+    condition.notify_one(); // Signaler qu'une nouvelle tâche est disponible
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) +
+                           " a reçu une tâche : " + tache + " pour la recette " +
+                           std::to_string(recetteId));
+}
+
+void CommisCuisine::traiterTache() {
+    while (actif) {
+        std::unique_lock<std::mutex> lock(mutexTaches);
+        condition.wait(lock, [this]() { return !taches.empty() || !actif; });
+
+        if (!actif) break;
+
+        auto tache = taches.front();
+        taches.pop();
+        lock.unlock();
+
+        traiterEtape(tache.second, tache.first);
+    }
+}
+
+void CommisCuisine::traiterEtape(int recetteId, const std::string& etape) {
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) +
+                           " commence l'étape : " + etape +
+                           " pour la recette " + std::to_string(recetteId));
+
+    // Vérifier disponibilité des ustensiles ou équipements nécessaires
+    if (!verifierDisponibiliteUstensile(recetteId) || !verifierDisponibiliteEquipement(recetteId)) {
+        Logger::instance().log("Commis de Cuisine " + std::to_string(id) +
+                               " ne peut pas continuer l'étape " + etape +
+                               " car des ressources sont indisponibles.");
+        return;
+    }
+
+    // Simuler le temps de traitement de l'étape
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) +
+                           " a terminé l'étape : " + etape +
+                           " pour la recette " + std::to_string(recetteId));
+
+    // Notifier disponibilité des ustensiles après utilisation
+    notifierUstensileDisponible(recetteId);
+}
+
+void CommisCuisine::notifierUstensileDisponible(int ustensileId) {
+    Logger::instance().log("Commis de Cuisine " + std::to_string(id) +
+                           " signale que l'ustensile " + std::to_string(ustensileId) +
+                           " est disponible pour nettoyage.");
+}
+
+bool CommisCuisine::verifierDisponibiliteUstensile(int ustensileId) {
+    std::lock_guard<std::mutex> lock(dbMutex);
+
+    QSqlQuery query(DatabaseManager::instance().getDatabase());
+    query.prepare("SELECT status FROM ustensils WHERE ustensil_id = :ustensil_id");
+    query.bindValue(":ustensil_id", ustensileId);
+
+    if (!query.exec() || !query.next()) {
+        Logger::instance().log("Erreur lors de la vérification de l'ustensile " +
+                               std::to_string(ustensileId));
+        return false;
+    }
+
+    std::string status = query.value("status").toString().toStdString();
+    return status == "Disponible";
+}
+
+bool CommisCuisine::verifierDisponibiliteEquipement(int equipementId) {
+    std::lock_guard<std::mutex> lock(dbMutex);
+
+    QSqlQuery query(DatabaseManager::instance().getDatabase());
+    query.prepare("SELECT status FROM equipment WHERE equipment_id = :equipment_id");
+    query.bindValue(":equipment_id", equipementId);
+
+    if (!query.exec() || !query.next()) {
+        Logger::instance().log("Erreur lors de la vérification de l'équipement " +
+                               std::to_string(equipementId));
+        return false;
+    }
+
+    std::string status = query.value("status").toString().toStdString();
+    return status == "Disponible";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+plongeur.h :
+
+
+
+#ifndef PLONGEUR_H
+#define PLONGEUR_H
+
+#include "../utils/Logger.h"
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
+
+class Plongeur {
+public:
+    explicit Plongeur();
+    ~Plongeur();
+
+    void start();                 // Démarrer le thread
+    void stop();                  // Arrêter le thread
+    void ajouterUstensile(int ustensileId); // Ajouter un ustensile à nettoyer
+
+private:
+    std::atomic<bool> actif;       // Indique si le plongeur est actif
+    std::thread threadPlongeur;    // Thread du plongeur
+    std::queue<int> ustensiles;    // File des ustensiles à nettoyer
+    std::mutex mutexUstensiles;    // Mutex pour protéger l'accès à la file
+    std::condition_variable condition;
+
+    void nettoyerUstensiles();     // Nettoyer les ustensiles
+};
+
+#endif // PLONGEUR_H
+
+
+
+
+
+plongeur.cpp :
+
+
+
+#include "Plongeur.h"
+#include "../utils/Logger.h"
+#include <chrono>
+#include <thread>
+
+Plongeur::Plongeur() : actif(false) {}
+
+Plongeur::~Plongeur() {
+    stop();
+}
+
+void Plongeur::start() {
+    actif = true;
+    threadPlongeur = std::thread(&Plongeur::nettoyerUstensiles, this);
+    Logger::instance().log("Plongeur démarré.");
+}
+
+void Plongeur::stop() {
+    actif = false;
+    if (threadPlongeur.joinable()) {
+        threadPlongeur.join();
+    }
+    Logger::instance().log("Plongeur arrêté.");
+}
+
+void Plongeur::ajouterUstensile(int ustensileId) {
+    {
+        std::lock_guard<std::mutex> lock(mutexUstensiles);
+        ustensiles.push(ustensileId);
+    }
+    condition.notify_one(); // Notifier qu'un ustensile est disponible
+    Logger::instance().log("Plongeur a reçu l'ustensile " +
+                           std::to_string(ustensileId) + " pour nettoyage.");
+}
+
+void Plongeur::nettoyerUstensiles() {
+    while (actif) {
+        std::unique_lock<std::mutex> lock(mutexUstensiles);
+        condition.wait(lock, [this]() { return !ustensiles.empty() || !actif; });
+
+        if (!actif) break;
+
+        int ustensileId = ustensiles.front();
+        ustensiles.pop();
+        lock.unlock();
+
+        Logger::instance().log("Plongeur nettoie l'ustensile " +
+                               std::to_string(ustensileId));
+
+        // Simuler le temps de nettoyage
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        Logger::instance().log("Plongeur a terminé de nettoyer l'ustensile " +
+                               std::to_string(ustensileId));
+    }
+}
