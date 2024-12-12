@@ -11,39 +11,29 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Restaurant</string>
+   <string>Maquette du Restaurant</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
+
+  <!-- Zone centrale contenant le restaurant -->
+  <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Bienvenue dans notre restaurant</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Démarrer</string>
-      </property>
-     </widget>
-    </item>
+    <!-- Aucune interface supplémentaire ici, le dessin est effectué dans RestaurantWidget -->
    </layout>
   </widget>
+
+  <!-- Barre de menu -->
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>17</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
+
+  <!-- Barre d'état -->
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>

@@ -1,40 +1,20 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "reservationwindow.h"
+#include "ui_mainwindow.h"
+#include "restaurantwidget.h"  // Inclure l'en-tête du widget personnalisé
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    restaurantWidget(new RestaurantWidget(this)) // Initialiser le widget personnalisé
 {
-    ui->setupUi(this);
+    ui->setupUi(this);  // Initialiser l'interface graphique
 
-    // Modifier la police du texte
-    QFont font;
-    font.setPointSize(24); // Taille de police agrandie
-    font.setBold(true);    // Police en gras
-    ui->label->setFont(font);
-
-    // Centrer le texte dans le QLabel
-    ui->label->setAlignment(Qt::AlignCenter);
-
-
-    // Définir une hauteur fixe pour le bouton (optionnel si nécessaire)
-    ui->pushButton->setFixedHeight(50);
-
-    // Connecter le bouton à la méthode pour ouvrir la fenêtre de réservation
-    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::openReservationWindow);
+    // Définir le widget central de la fenêtre principale
+    setCentralWidget(restaurantWidget); // Ajouter le widget RestaurantWidget comme widget central
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-}
-
-void MainWindow::openReservationWindow() {
-    // Fermer la fenêtre principale
-    this->close();
-
-    // Créer et afficher la fenêtre de réservation
-    ReservationWindow *reservationWindow = new ReservationWindow();
-    reservationWindow->show();
+    delete ui;  // Libérer les ressources de l'interface
+    delete restaurantWidget;  // Libérer le widget personnalisé
 }
